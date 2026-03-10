@@ -1,0 +1,52 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+
+:root {
+  --background: #ffffff;
+  --foreground: #000000;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Inter Variable", sans-serif;
+  font-size: 12px;
+  margin-top: 2.2em;
+  margin-left: 1em;
+  margin-right: 1em;
+  font-variation-settings: 'wght' 200;
+}
+
+a {
+  cursor: pointer;
+}
+
+.switcher {
+  .first {
+    font-variation-settings: 'wght' 200;
+    transition: font-variation-settings 0.2s ease-in-out;
+  }
+  .second {
+    font-variation-settings: 'wght' 700;
+    transition: font-variation-settings 0.2s ease-in-out;
+  }
+
+  &:hover {
+    .first {
+      font-variation-settings: 'wght' 700;
+    }
+    .second {
+      font-variation-settings: 'wght' 200;
+    }
+  }
+}
+
+.header {
+  height: 5em;
+}
+
+.content {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+}
