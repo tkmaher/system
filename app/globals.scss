@@ -10,15 +10,21 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: "Inter Variable", sans-serif;
-  font-size: 12px;
+  font-size: 11px;
   margin-top: 2.2em;
-  margin-left: 1em;
-  margin-right: 1em;
+  margin-left: 2em;
+  margin-right: 2em;
   font-variation-settings: 'wght' 200;
 }
 
 a {
   cursor: pointer;
+}
+
+select {
+  -webkit-appearance: none; /* for Chrome, Safari, Opera */
+  -moz-appearance: none;    /* for Firefox */
+  appearance: none;
 }
 
 .switcher {
@@ -27,18 +33,23 @@ a {
     transition: font-variation-settings 0.2s ease-in-out;
   }
   .second {
-    font-variation-settings: 'wght' 700;
+    font-variation-settings: 'wght' 500;
     transition: font-variation-settings 0.2s ease-in-out;
   }
 
   &:hover {
     .first {
-      font-variation-settings: 'wght' 700;
+      font-variation-settings: 'wght' 500;
     }
     .second {
       font-variation-settings: 'wght' 200;
     }
   }
+}
+
+.smaller {
+  font-variation-settings: 'wght' 100;
+  font-size: 10px;
 }
 
 .header {
@@ -49,4 +60,60 @@ a {
   display: flex;
   flex-direction: row;
   gap: 1em;
+}
+
+.item-block {
+  width: 110.74px;
+  height: 16px;
+  border: 0.5px solid var(--foreground);
+  margin-right: 0.5em;
+  margin-bottom: 0.5em;
+  display: inline-block;
+  background-color: var(--background);
+  transition: background-color 0.2s ease-in-out;
+  cursor: pointer;
+  &:hover {
+    background-color: #e0e0e0;
+  }
+}
+
+.grayed {
+  background-color:#ececec;
+}
+
+.tag {
+  display: flex;
+  padding: 0 0.5em;
+  vertical-align: middle;
+  min-width: 5em;
+  background-color: #e0e0e0;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+
+  & > :first-child {
+    flex-grow: 0;
+    width: 0;
+    opacity: 0;
+    transition: width 0.2s ease-in-out, opacity 0.2s ease-in-out;
+    pointer-events: none;
+  }
+  & > :last-child {
+    flex-grow: 1;
+    text-align: center;
+  }
+
+  &:hover {
+    background-color: #c0c0c0;
+    & > :first-child {
+      width: 1em;
+      opacity: 1;
+    }
+  }
+
+  
+}
+
+.year {
+  transition: opacity 0.2s ease-in-out;
 }

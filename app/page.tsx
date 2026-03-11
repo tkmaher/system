@@ -2,11 +2,13 @@
 import Clock from "@/components/clock";
 import Leftside from "@/components/leftside";
 import Rightside from "@/components/rightside";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 
 export default function Home() {
   const [isInfo, setIsInfo] = useState(false);
-
+  const params = useParams();
+  const id: number = params.id ? parseInt(params.id.toString()) : 0;
   return (
     <div>
       <div className="header">
@@ -21,8 +23,8 @@ export default function Home() {
           </div>
         </div>
         <div className="content">
-          <Leftside/>
-          <Rightside/>
+          <Leftside id={id}/>
+          <Rightside id={id}/>
         </div>
     </div>
   );

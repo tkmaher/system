@@ -142,7 +142,7 @@ export default function EditPage() {
       
       })
       .catch((err) => {
-        console.error("Error fetching portfolio items:", err);
+          console.error("Error fetching portfolio items:", err);
       });
   }
 
@@ -205,14 +205,17 @@ export default function EditPage() {
           Log out
         </button>
       </div>
-
+      <br/>
       {/* Your protected content here */}
       {portfolioItems.map(item => (
-        <div key={item.id} >  
+        <div key={item.id} className="border-1 border-solid">  
           <PortfolioItemEditor item={item} />
           <button onClick={(e) => deleteItem(item.id)}>Delete</button>
+          <br/>
+          
         </div>
       ))}
+      <br/>
       <PortfolioItemEditor item={dummyData}/>
     </div>
   );

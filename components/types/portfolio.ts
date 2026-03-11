@@ -7,4 +7,5 @@ export interface PortfolioItem {
     video?: string;
     tags: string[];
     images: string[];
+    index?: number;
 }
