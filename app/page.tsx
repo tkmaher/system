@@ -2,19 +2,60 @@
 import Clock from "@/components/clock";
 import Leftside from "@/components/leftside";
 import Rightside from "@/components/rightside";
-import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useSearchParams } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { PortfolioItem } from "@/components/types/portfolio";
+import Link from "next/link";
+
+const API_BASE = "https://blue-river-ebb7.tomaszkkmaher.workers.dev"
 
 export default function Home() {
   const [isInfo, setIsInfo] = useState(false);
-  const params = useParams();
-  const id: number = params.id ? parseInt(params.id.toString()) : 0;
+  const params = useSearchParams();
+  const n = params.get("id");
+  const id: number = n ? parseInt(n.toString()) : 0;
+  console.log("ID:", id);
+  const [list, setList] = useState<PortfolioItem[]>([]);
+  const [loaded, setLoaded] = useState(false);
+
+  async function getPortfolioItems() {
+    await fetch(`${API_BASE}/api/portfolio`, {})
+      .then((res) => res.json())
+      .then((data) => {
+        let output: PortfolioItem[] = [];
+        let i = 0;
+        for (const item of data.items) {
+            output.push({
+                id: item.id,
+                name: item.name,
+                body: item.body,
+                client: item.client,
+                tags: item.tags.split(','),
+                images: item.images,
+                date: new Date(item.date),
+                index: i
+            });
+            
+            i++;
+        }
+        setList(output);
+        setLoaded(true);
+      })
+      .catch((err) => {
+        console.error("Error fetching portfolio items:", err);
+      });
+  }
+
+  useEffect(() => {
+      getPortfolioItems();
+  }, []);
+
   return (
     <div>
       <div className="header">
-          <a className="switcher float-left" href="/">
+          <Link className="switcher float-left" href="/">
             <span className="first">Amala</span> <span className="second">Network</span>
-          </a>
+          </Link>
           <div className="switcher float-right text-right">
             <a onClick={() => setIsInfo(e => !e)}>
               <span className={isInfo ? "first" : "second"}>Work</span> <span className={isInfo ? "second" : "first"}>Info</span>
@@ -22,9 +63,10 @@ export default function Home() {
             <Clock/>
           </div>
         </div>
-        <div className="content">
-          <Leftside id={id}/>
-          <Rightside id={id}/>
+        
+        <div className="content" style={{opacity: loaded ? 1 : 0}}>
+          {loaded && <Leftside id={id} list={list}/>}
+          {loaded && <Rightside id={id} item={list[id]}/>}
         </div>
     </div>
   );

@@ -24,6 +24,13 @@ async function loginRequest(password: string): Promise<string> {
 /** Attach to any protected fetch call */
 export function authFetch(input: RequestInfo, init: RequestInit = {}) {
   const token = localStorage.getItem("token");
+
+  if (token && isTokenExpired(token)) {
+    localStorage.removeItem("token");
+    window.location.href = "/edit"; // or wherever your login page is
+    return Promise.reject(new Error("Session expired"));
+  }
+
   return fetch(input, {
     ...init,
     headers: {
@@ -31,6 +38,16 @@ export function authFetch(input: RequestInfo, init: RequestInit = {}) {
       Authorization: token ? `Bearer ${token}` : "",
     },
   });
+}
+
+function isTokenExpired(token: string): boolean {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    if (!payload.exp) return false;
+    return Math.floor(Date.now() / 1000) > payload.exp;
+  } catch {
+    return true; // malformed token — treat as expired
+  }
 }
 
 // ─── Login screen ─────────────────────────────────────────────────────────────
@@ -148,7 +165,14 @@ export default function EditPage() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    setLoggedIn(!!token);
+  
+    if (token && isTokenExpired(token)) {
+      localStorage.removeItem("token");
+      setLoggedIn(false);
+    } else {
+      setLoggedIn(!!token);
+    }
+  
     setChecking(false);
     getPortfolioItems();
   }, []);
