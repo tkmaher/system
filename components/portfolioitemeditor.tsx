@@ -13,6 +13,7 @@ export default function PortfolioItemEditor({ item }: { item: PortfolioItem }) {
     const [date,   setDate]   = useState<Date>(item.date);
     const [client, setClient] = useState(item.client);
     const [tags,   setTags]   = useState<string[]>(item.tags);
+    const [link,   setLink]   = useState(item.link ?? "");
 
     const [orderedList, setOrderedList] = useState(
         item.images.map(url => ({ type: "existing", value: url, file: new Blob(), fname: "" }))
@@ -36,6 +37,7 @@ export default function PortfolioItemEditor({ item }: { item: PortfolioItem }) {
         formData.append("client", client);
         formData.append("date",   date instanceof Date ? date.toISOString().slice(0, 10) : String(date));
         formData.append("tags",   tags.join(","));
+        formData.append("link",   link);
         formData.append("delete", JSON.stringify(deleted));
 
         // Attach file blobs for new images and mark their fname keys
@@ -173,6 +175,13 @@ export default function PortfolioItemEditor({ item }: { item: PortfolioItem }) {
                     name="client"
                     value={client}
                     onChange={(e) => setClient(e.target.value)}
+                />
+                <input
+                    type="link"
+                    placeholder="Link"
+                    name="link"
+                    value={link}
+                    onChange={(e) => setLink(e.target.value)}
                 />
                 <br /><br />
 

@@ -150,9 +150,11 @@ export default function EditPage() {
             name: item.name,
             body: item.body,
             client: item.client,
+            video_url: item.video_url ? item.video_url : null,
             tags: item.tags.split(','),
             images: item.images,
             date: new Date(item.date),
+            link: item.link ? item.link : null,
           });
         }
         setPortfolioItems(output);

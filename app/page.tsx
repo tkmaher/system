@@ -11,10 +11,14 @@ const API_BASE = "https://blue-river-ebb7.tomaszkkmaher.workers.dev"
 
 export default function Home() {
   const [isInfo, setIsInfo] = useState(false);
+  const [id, setid] = useState(0);
   const params = useSearchParams();
   const n = params.get("id");
-  const id: number = n ? parseInt(n.toString()) : 0;
-  console.log("ID:", id);
+  if (n && !isNaN(parseInt(n.toString()))) {
+    if (parseInt(n.toString()) !== id) {
+      setid(parseInt(n.toString()));
+    }
+  }
   const [list, setList] = useState<PortfolioItem[]>([]);
   const [loaded, setLoaded] = useState(false);
 
@@ -32,8 +36,10 @@ export default function Home() {
                 client: item.client,
                 tags: item.tags.split(','),
                 images: item.images,
+                video_url: item.video_url ? item.video_url : null,
                 date: new Date(item.date),
-                index: i
+                index: i,
+                link: item.link ? item.link : null,
             });
             
             i++;

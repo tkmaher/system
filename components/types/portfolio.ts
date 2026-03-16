@@ -4,8 +4,9 @@ export interface PortfolioItem {
     body: string;
     client: string;
     date: Date;
-    video?: string;
+    video_url?: string;
     tags: string[];
     images: string[];
     index?: number;
+    link?: string;
 }
