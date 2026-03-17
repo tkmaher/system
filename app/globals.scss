@@ -16,6 +16,7 @@ body {
   margin-right: 2em;
   font-variation-settings: 'wght' 200;
   user-select: none;
+  overflow-x: hidden;
 }
 
 a {
@@ -30,6 +31,7 @@ select {
 
 .rightside {
   transition: opacity 0.5s ease-in-out;
+  perspective: 1000px;
   opacity: 0;
   display: flex;
   flex-direction: column;
@@ -39,8 +41,20 @@ select {
   margin-bottom: 0.5em;
   gap: 1.2em;
   .description {
-
-    user-select: text;
+    display: flex;
+    flex-direction: row;
+    div {
+      flex-grow: 1;
+    }
+    a {
+      justify-self: center;
+      align-self: center;
+      flex-grow: 1;
+      max-width: 2em;
+      img {
+        max-width: 1.5em;
+      }
+    }
   }
 }
 
@@ -123,6 +137,8 @@ select {
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
 
+
+
   & > :first-child {
     flex-grow: 0;
     width: 0;
@@ -133,6 +149,10 @@ select {
   & > :last-child {
     flex-grow: 1;
     text-align: center;
+  }
+
+  .tag-permanent {
+    opacity: 1;
   }
 
   &:hover {
@@ -166,6 +186,7 @@ select {
     align-self: center;
     max-height: 60vh;
     transition: opacity 0.2s ease-in-out;
+    pointer-events: none;
   }
 
 }

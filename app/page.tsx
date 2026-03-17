@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from "react";
 import { PortfolioItem } from "@/components/types/portfolio";
 import Link from "next/link";
+import { TagProvider } from '@/components/contexts/tagcontext';
 
 const API_BASE = "https://blue-river-ebb7.tomaszkkmaher.workers.dev"
 
@@ -58,7 +59,8 @@ export default function Home() {
 
   return (
     <div>
-      <div className="header">
+      <TagProvider>
+        <div className="header">
           <Link className="switcher float-left" href="/">
             <span className="first">Amala</span> <span className="second">Network</span>
           </Link>
@@ -74,6 +76,7 @@ export default function Home() {
           {loaded && <Leftside id={id} list={list}/>}
           {loaded && <Rightside id={id} item={list[id]}/>}
         </div>
+      </TagProvider>
     </div>
   );
 }

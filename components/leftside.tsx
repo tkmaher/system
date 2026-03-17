@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import { PortfolioItem } from "@/components/types/portfolio";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { useRouter } from 'next/navigation';
+import { useTags } from "@/components/contexts/tagcontext";
 
 export default function Leftside({ id, list }: { id: number, list: PortfolioItem[] }) {
     const [timeline, setTimeline] = useState(false);
     const [oldNew, setOldNew] = useState(false);
-    const [tags, setTags] = useState<string[]>([]);
-    const [tagList, setTagList] = useState(() => new Set<string>());
+    const { tags, setTags, tagList, setTagList } = useTags();
 
     const router = useRouter();
 
@@ -27,7 +27,7 @@ export default function Leftside({ id, list }: { id: number, list: PortfolioItem
             <select className={tagList.size > 0 ? "tag" : "tag pointer-events-none opacity-50"}
             
                  onChange={(e) => {
-                    setTags(prevList => [...prevList, e.target.value]);
+                    setTags(prevList => prevList.add(e.target.value));
                     setTagList(prevList => {
                         const newList = new Set(prevList);
                         newList.delete(e.target.value);
@@ -45,7 +45,11 @@ export default function Leftside({ id, list }: { id: number, list: PortfolioItem
     function Tag({ name }: { name: string }) {
         return (
             <div className="tag" onClick={()=> {
-                setTags(prevList => prevList.filter(item => item !== name));
+                setTags(prevList => {
+                    const newList = new Set(prevList);
+                    newList.delete(name);
+                    return newList;
+                });
                 setTagList(prevList => prevList.add(name));
             }}>
                 <div className="float-left">
@@ -60,7 +64,7 @@ export default function Leftside({ id, list }: { id: number, list: PortfolioItem
     }
 
     function ItemBlock({ item, index }: { item: PortfolioItem, index: number }) {
-        const matchesTags = tags.every(tag => item.tags.includes(tag));
+        const matchesTags = tags.size === 0 || item.tags.some((tag: string) => tags.has(tag));
         if (!matchesTags) return null;
         return (
             <motion.div
@@ -87,7 +91,7 @@ export default function Leftside({ id, list }: { id: number, list: PortfolioItem
                 </div>
                 <motion.div className="flex flex-row smaller mt-1.5">
                     <AnimatePresence mode="sync">
-                        {tags.map((tag, i) => (
+                        {[...tags].map((tag, i) => (
                             <motion.div
                                 key={i}
                                 initial={{ opacity: 0, width: 0 }}
