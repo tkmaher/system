@@ -12,6 +12,7 @@ const API_BASE = "https://blue-river-ebb7.tomaszkkmaher.workers.dev"
 
 export default function Home() {
   const [isInfo, setIsInfo] = useState(false);
+  const [trigger, setTrigger] = useState(false);
   const [id, setid] = useState(0);
   const params = useSearchParams();
   const n = params.get("id");
@@ -57,6 +58,12 @@ export default function Home() {
       getPortfolioItems();
   }, []);
 
+  useEffect(() => {
+    setTrigger(true);
+    const timer = setTimeout(() => setTrigger(false), 500); 
+    return () => clearTimeout(timer);
+  }, [isInfo]); 
+
   return (
     <div>
       <TagProvider>
@@ -72,9 +79,9 @@ export default function Home() {
           </div>
         </div>
         
-        <div className="content" style={{opacity: loaded ? 1 : 0}}>
-          {loaded && <Leftside id={id} list={list}/>}
-          {loaded && <Rightside id={id} item={list[id]}/>}
+        <div className={trigger ? 'zoom-in content ' : 'content'} style={{opacity: loaded ? 1 : 0}}>
+          {loaded && <Leftside id={id} list={list} mode={!isInfo}/>}
+          {loaded && <Rightside id={id} item={list[id]} mode={!isInfo}/>}
         </div>
       </TagProvider>
     </div>

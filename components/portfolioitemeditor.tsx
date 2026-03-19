@@ -13,7 +13,7 @@ export default function PortfolioItemEditor({ item }: { item: PortfolioItem }) {
     const [date,   setDate]   = useState<Date>(item.date);
     const [client, setClient] = useState(item.client);
     const [tags,   setTags]   = useState<string[]>(item.tags);
-    const [link,   setLink]   = useState(item.link ?? "");
+    const [link,   setLink]   = useState(item.link);
 
     const [orderedList, setOrderedList] = useState(
         item.images.map(url => ({ type: "existing", value: url, file: new Blob(), fname: "" }))
@@ -177,7 +177,7 @@ export default function PortfolioItemEditor({ item }: { item: PortfolioItem }) {
                     onChange={(e) => setClient(e.target.value)}
                 />
                 <input
-                    type="link"
+                    type="url"
                     placeholder="Link"
                     name="link"
                     value={link}

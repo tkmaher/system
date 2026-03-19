@@ -8,5 +8,5 @@ export interface PortfolioItem {
     tags: string[];
     images: string[];
     index?: number;
-    link?: string;
+    link: string;
 }

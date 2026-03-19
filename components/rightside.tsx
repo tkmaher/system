@@ -3,11 +3,12 @@ import { useState, useRef, useMemo } from "react";
 import { PortfolioItem } from "./types/portfolio";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTags } from "@/components/contexts/tagcontext";
+import ReactMarkDown from "react-markdown";
 
-export default function Rightside({ id, item }: { id: number; item: PortfolioItem }) {
+export default function Rightside({ id, item, mode }: { id: number; item: PortfolioItem, mode: boolean }) {
     return (
         <AnimatePresence mode="wait">
-            <RightsideInner key={id} item={item} />
+            {mode && <RightsideInner key={id} item={item} />}
         </AnimatePresence>
     );
 }
@@ -124,7 +125,7 @@ function RightsideInner({ item }: { item: PortfolioItem }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: loaded ? 1 : 0 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.1 }}
+            transition={{ duration: 0.2 }}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
@@ -177,7 +178,9 @@ function RightsideInner({ item }: { item: PortfolioItem }) {
                     </a>
                 }
             </div>
-            <div className="description">{item.body}</div>
+            <div className="description">
+                <ReactMarkDown>{item.body}</ReactMarkDown>
+            </div>
             <div className="flex flex-row smaller mt-1.5">
                 {TagMemo}
             </div>

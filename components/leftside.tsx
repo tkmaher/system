@@ -6,7 +6,15 @@ import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { useRouter } from 'next/navigation';
 import { useTags } from "@/components/contexts/tagcontext";
 
-export default function Leftside({ id, list }: { id: number, list: PortfolioItem[] }) {
+export default function Leftside({ id, list, mode }: { id: number, list: PortfolioItem[], mode: boolean }) {
+    return (
+        <AnimatePresence mode="wait">
+            {mode ? <LeftsideInner id={id} list={list} /> : <Info />}
+        </AnimatePresence>
+    );
+}
+
+export function LeftsideInner({ id, list }: { id: number, list: PortfolioItem[] }) {
     const [timeline, setTimeline] = useState(false);
     const [oldNew, setOldNew] = useState(false);
     const { tags, setTags, tagList, setTagList } = useTags();
@@ -64,7 +72,7 @@ export default function Leftside({ id, list }: { id: number, list: PortfolioItem
     }
 
     function ItemBlock({ item, index }: { item: PortfolioItem, index: number }) {
-        const matchesTags = tags.size === 0 || item.tags.some((tag: string) => tags.has(tag));
+        const matchesTags = tags.size === 0 || [...tags].every((tag: string) => item.tags.includes(tag));
         if (!matchesTags) return null;
         return (
             <motion.div
@@ -77,7 +85,13 @@ export default function Leftside({ id, list }: { id: number, list: PortfolioItem
     }
 
     return (
-        <div className="leftside">
+        <motion.div
+            className="leftside"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1}}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+        >
             <div>
                 <div className="switcher">
                     <a onClick={() => setTimeline(e => !e)}>
@@ -131,7 +145,9 @@ export default function Leftside({ id, list }: { id: number, list: PortfolioItem
                                     >
                                         <div className="year">{year}</div>
                                         <div className="flex flex-wrap flex-row">
-                                            {items.map((item) => <ItemBlock item={item} index={item.index ? item.index : 0} key={item.id} />)}
+                                            {items.map((item) => 
+                                                <ItemBlock item={item} index={item.index ? item.index : 0} key={item.id} />
+                                            )}
                                         </div>
                                     </motion.div>
                                 ))
@@ -150,6 +166,26 @@ export default function Leftside({ id, list }: { id: number, list: PortfolioItem
                     </motion.div>
                 </LayoutGroup>
             </div>
+        </motion.div>
+    )
+}
+
+export function Info() {
+    return (
+        <div className="leftside">
+            <motion.div className="flex flex-row smaller mt-1.5">
+                <AnimatePresence mode="sync">
+                    <motion.div
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: "fit-content" }}
+                        exit={{ opacity: 0, width: 0 }}          
+                        transition={{ duration: 0.2 }}
+                        layout                          
+                    >
+                        test
+                    </motion.div>
+                </AnimatePresence>
+            </motion.div>
         </div>
     )
 }

@@ -107,6 +107,16 @@ select {
   gap: 1em;
 }
 
+@keyframes rollout {
+  0% { transform: scale(1) }
+  50% { transform: scale(0.99) }
+  100% { transform: scale(1) }
+}
+
+.zoom-in {
+  animation: 0.4s rollout;
+}
+
 .item-block {
   width: 110.74px;
   height: 16px;
@@ -168,6 +178,8 @@ select {
 
 .year {
   transition: opacity 0.2s ease-in-out;
+  height: 16px;
+  margin-bottom: 0.5em;
 }
 
 .media-wrapper {

@@ -154,7 +154,7 @@ export default function EditPage() {
             tags: item.tags.split(','),
             images: item.images,
             date: new Date(item.date),
-            link: item.link ? item.link : null,
+            link: item.link
           });
         }
         setPortfolioItems(output);
@@ -198,7 +198,7 @@ export default function EditPage() {
     tags: [],
     images: [],
     date: new Date(),
-    
+    link: "",
   }
 
   const deleteItem = async (id: string) => {
@@ -230,6 +230,8 @@ export default function EditPage() {
         >
           Log out
         </button>
+        <br/>
+        <a href="/">Home</a>
       </div>
       <br/>
       {/* Your protected content here */}
