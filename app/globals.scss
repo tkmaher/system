@@ -40,6 +40,7 @@ select {
   text-align: left;
   margin-bottom: 0.5em;
   gap: 1.2em;
+  align-self: center;
   .description {
     display: flex;
     flex-direction: row;
@@ -63,7 +64,8 @@ select {
   flex-direction: column;
   flex-grow: 1;
   flex-basis: 100%;
-  margin-top: calc((100vh - 30em) / 2);
+  align-self: center;
+  min-height: 200px;
 }
 
 .switcher {
@@ -88,6 +90,30 @@ select {
 
 .bolded {
   font-variation-settings: 'wght' 500;
+  display: inline-block;
+}
+
+.hover-bold {
+  transition: font-variation-settings 0.2s ease-in-out;;
+  &:hover {
+    cursor: pointer;
+    font-variation-settings: 'wght' 500;
+  }
+}
+
+.contact-link {
+  .child:not(:first-child) {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
+  }
+  &:has(.child:first-child:hover) {
+    .child:not(:first-child) {
+      // Add your styles for the rest of the children here
+      opacity: 1;
+      pointer-events: auto;
+    }
+  }
 }
 
 .smaller {
@@ -105,6 +131,7 @@ select {
   display: flex;
   flex-direction: row;
   gap: 1em;
+  height: calc(100vh - 5em - 4em);
 }
 
 @keyframes rollout {

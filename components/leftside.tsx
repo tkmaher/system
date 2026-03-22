@@ -6,10 +6,10 @@ import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { useRouter } from 'next/navigation';
 import { useTags } from "@/components/contexts/tagcontext";
 
-export default function Leftside({ id, list, mode }: { id: number, list: PortfolioItem[], mode: boolean }) {
+export default function Leftside({ id, list }: { id: number, list: PortfolioItem[] }) {
     return (
         <AnimatePresence mode="wait">
-            {mode ? <LeftsideInner id={id} list={list} /> : <Info />}
+            <LeftsideInner id={id} list={list} />
         </AnimatePresence>
     );
 }
@@ -78,7 +78,7 @@ export function LeftsideInner({ id, list }: { id: number, list: PortfolioItem[] 
             <motion.div
                 className={index == id ? "item-block grayed" : "item-block"}
                 layoutId={`item-${item.id}`}
-                layoutDependency={timeline}
+                layoutDependency={[timeline, oldNew]}
                 onClick={() => router.push(`?id=${item.index}`)}
             />
         )
@@ -172,20 +172,45 @@ export function LeftsideInner({ id, list }: { id: number, list: PortfolioItem[] 
 
 export function Info() {
     return (
-        <div className="leftside">
-            <motion.div className="flex flex-row smaller mt-1.5">
-                <AnimatePresence mode="sync">
-                    <motion.div
-                        initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: 1, width: "fit-content" }}
-                        exit={{ opacity: 0, width: 0 }}          
-                        transition={{ duration: 0.2 }}
-                        layout                          
-                    >
-                        test
-                    </motion.div>
-                </AnimatePresence>
-            </motion.div>
-        </div>
+        <motion.div className="leftside">
+            <AnimatePresence mode="sync">
+                <motion.div
+                    className="flex flex-row mt-1.5 max-width-[50%] p-[20vw] align-items-center"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}          
+                    transition={{ duration: 0.2 }}
+                    layout                          
+                >
+                    <div className="flex flex-col gap-2 basis-[50%] self-center flex-grow-0">
+                        <div>
+                            <div className="bolded">[NAME]</div> is an independent web development studio based in Chicago, Illinois. It specializes in bespoke development with an emphasis on client-centric modularity and customization.
+                        </div>
+                        <div>
+                            Websites are built from the ground up and designed with the strict discretion of the client.
+                        </div>
+                        <br/>
+                        <div className="contact-link">
+                            <a className="hover-bold child" target="_blank" href="mailto:[INSERT EMAIL]">Contact</a>
+                            <em className="child">→name@domain.com</em>
+                            <br/>
+                            <em className="child smaller">Include a general outline of your project. Rates are determined based on time commitment and hosting/server costs.</em>
+                        </div>
+                        <em className="smaller">
+                            <div className="bolded">[NAME]</div> is the studio of <a href="https://otherseas1.com" target="_blank" className="hover-bold">otherseas1</a>. Portfolio available upon request.
+                        </em>
+                    </div>
+                    <div className="basis-[50%] flex items-center justify-end">
+                        <img 
+                            className="w-[15vw]"
+                            src="sign.svg" 
+                            draggable="false" 
+                        /> 
+                    </div>
+                    
+                </motion.div>
+            </AnimatePresence>
+                
+        </motion.div>
     )
 }

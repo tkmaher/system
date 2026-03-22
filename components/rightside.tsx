@@ -5,10 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useTags } from "@/components/contexts/tagcontext";
 import ReactMarkDown from "react-markdown";
 
-export default function Rightside({ id, item, mode }: { id: number; item: PortfolioItem, mode: boolean }) {
+export default function Rightside({ id, item }: { id: number; item: PortfolioItem }) {
     return (
         <AnimatePresence mode="wait">
-            {mode && <RightsideInner key={id} item={item} />}
+            <RightsideInner key={id} item={item}/>
         </AnimatePresence>
     );
 }
@@ -36,6 +36,8 @@ function RightsideInner({ item }: { item: PortfolioItem }) {
             videoRef.current?.play();
         }
     }
+
+    
 
     const handleMouseDown = (e: React.MouseEvent) => {
         const box = e.currentTarget.getBoundingClientRect();
@@ -122,7 +124,7 @@ function RightsideInner({ item }: { item: PortfolioItem }) {
     return (
         <motion.div
             className="rightside"
-            initial={{ opacity: 0 }}
+            initial={{ opacity: 0}}
             animate={{ opacity: loaded ? 1 : 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
@@ -184,6 +186,7 @@ function RightsideInner({ item }: { item: PortfolioItem }) {
             <div className="flex flex-row smaller mt-1.5">
                 {TagMemo}
             </div>
+                
         </motion.div>
     );
 }

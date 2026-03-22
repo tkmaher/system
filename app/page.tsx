@@ -1,6 +1,6 @@
 "use client";
 import Clock from "@/components/clock";
-import Leftside from "@/components/leftside";
+import Leftside, { Info } from "@/components/leftside";
 import Rightside from "@/components/rightside";
 import { useSearchParams } from 'next/navigation';
 import { useState, useEffect } from "react";
@@ -46,6 +46,9 @@ export default function Home() {
             
             i++;
         }
+        if (id >= output.length) {
+          setid(0);
+        }
         setList(output);
         setLoaded(true);
       })
@@ -68,20 +71,26 @@ export default function Home() {
     <div>
       <TagProvider>
         <div className="header">
-          <Link className="switcher float-left" href="/">
+          <Link className="switcher float-left" href="/" onClick={() => setIsInfo(false)}>
             <span className="first">Amala</span> <span className="second">Network</span>
           </Link>
           <div className="switcher float-right text-right">
             <a onClick={() => setIsInfo(e => !e)}>
-              <span className={isInfo ? "first" : "second"}>Work</span> <span className={isInfo ? "second" : "first"}>Info</span>
+              <span className={isInfo ? "first" : "second"}>Work</span>{isInfo ? "←" : "→"}<span className={isInfo ? "second" : "first"}>Info</span>
             </a>
             <Clock/>
           </div>
         </div>
         
         <div className={trigger ? 'zoom-in content ' : 'content'} style={{opacity: loaded ? 1 : 0}}>
-          {loaded && <Leftside id={id} list={list} mode={!isInfo}/>}
-          {loaded && <Rightside id={id} item={list[id]} mode={!isInfo}/>}
+          {isInfo ?
+            loaded && <Info/> :
+            <>
+              {loaded && <Leftside id={id} list={list} />}
+              {loaded && <Rightside id={id} item={list[id]} />}
+            </>
+          }
+          
         </div>
       </TagProvider>
     </div>
