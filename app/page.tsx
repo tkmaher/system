@@ -7,10 +7,11 @@ import { useState, useEffect } from "react";
 import { PortfolioItem } from "@/components/types/portfolio";
 import Link from "next/link";
 import { TagProvider } from '@/components/contexts/tagcontext';
+import { Suspense } from "react";
 
 const API_BASE = "https://blue-river-ebb7.tomaszkkmaher.workers.dev"
 
-export default function Home() {
+function Home() {
   const [isInfo, setIsInfo] = useState(false);
   const [trigger, setTrigger] = useState(false);
   const [id, setid] = useState(0);
@@ -95,4 +96,12 @@ export default function Home() {
       </TagProvider>
     </div>
   );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={null}>
+      <Home />
+    </Suspense>
+  )
 }
