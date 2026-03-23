@@ -195,7 +195,7 @@ export function Info() {
                                 <a className="hover-bold child underline" target="_blank" href="mailto:[INSERT EMAIL]">Contact</a>
                                 <em className="child">→name@domain.com</em>
                                 <br/>
-                                <em className="child smaller">Include a general outline of your project. Rates are determined based on time commitment and hosting/server costs.</em>
+                                <em className="child smaller">Include a general outline of your project. Rates are determined based on time commitment and hosting/server costs.</em> 
                             </div>
                             
                         </div>
