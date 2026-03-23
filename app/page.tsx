@@ -71,8 +71,8 @@ export default function Home() {
     <div>
       <TagProvider>
         <div className="header">
-          <Link className="switcher float-left" href="/" onClick={() => setIsInfo(false)}>
-            <span className="first">Amala</span> <span className="second">Network</span>
+          <Link className="switcher float-left align-middle" href="/" onClick={() => setIsInfo(false)}>
+          + <span className="first">Public</span> <span className="second">Safety</span>
           </Link>
           <div className="switcher float-right text-right">
             <a onClick={() => setIsInfo(e => !e)}>

@@ -175,40 +175,42 @@ export function Info() {
         <motion.div className="leftside">
             <AnimatePresence mode="sync">
                 <motion.div
-                    className="flex flex-row mt-1.5 max-width-[50%] p-[20vw] align-items-center"
+                    className="flex flex-col gap-20 max-width-[50%] info-parent align-items-center"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}          
+                    exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
                     layout                          
                 >
-                    <div className="flex flex-col gap-2 basis-[50%] self-center flex-grow-0">
-                        <div>
-                            <div className="bolded">[NAME]</div> is an independent web development studio based in Chicago, Illinois. It specializes in bespoke development with an emphasis on client-centric modularity and customization.
-                        </div>
-                        <div>
-                            Websites are built from the ground up and designed with the strict discretion of the client.
-                        </div>
-                        <br/>
-                        <div className="contact-link">
-                            <a className="hover-bold child" target="_blank" href="mailto:[INSERT EMAIL]">Contact</a>
-                            <em className="child">→name@domain.com</em>
+                    <div className="flex flex-row info">
+                        <div className="flex flex-col gap-2 basis-[50%] self-center flex-grow-0">
+                            <div>
+                                <div className="bolded">Public Safety</div> is an independent web development studio based in Chicago, Illinois. It specializes in individualized development with an emphasis on client-centric modularity and customization.
+                            </div>
+                            <div>
+                                Websites are built from the ground up and designed at the strict discretion of the client.
+                            </div>
                             <br/>
-                            <em className="child smaller">Include a general outline of your project. Rates are determined based on time commitment and hosting/server costs.</em>
+                            <div className="contact-link">
+                                <a className="hover-bold child underline" target="_blank" href="mailto:[INSERT EMAIL]">Contact</a>
+                                <em className="child">→name@domain.com</em>
+                                <br/>
+                                <em className="child smaller">Include a general outline of your project. Rates are determined based on time commitment and hosting/server costs.</em>
+                            </div>
+                            
                         </div>
-                        <em className="smaller">
-                            <div className="bolded">[NAME]</div> is the studio of <a href="https://otherseas1.com" target="_blank" className="hover-bold">otherseas1</a>. Portfolio available upon request.
-                        </em>
+                        <div className="basis-[50%] flex items-center info-img">
+                            <img 
+                                src="sign.svg" 
+                                draggable="false" 
+                            /> 
+                        </div>
                     </div>
-                    <div className="basis-[50%] flex items-center justify-end">
-                        <img 
-                            className="w-[15vw]"
-                            src="sign.svg" 
-                            draggable="false" 
-                        /> 
-                    </div>
-                    
+                    <em className=" smaller text-center">
+                        Public Safety is the studio of <a href="https://otherseas1.com" target="_blank" className="hover-bold">otherseas1</a>. Portfolio available upon request.
+                    </em>
                 </motion.div>
+
             </AnimatePresence>
                 
         </motion.div>

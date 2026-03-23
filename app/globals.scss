@@ -3,7 +3,7 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #000000;
+  --foreground: #121212;
 }
 
 body {
@@ -21,6 +21,11 @@ body {
 
 a {
   cursor: pointer;
+}
+
+hr {
+  border: none;
+  border-top: 0.5px solid var(--foreground);
 }
 
 select {
@@ -243,5 +248,52 @@ select {
 
   a {
     color: var(--foreground);
+  }
+}
+
+.info-parent {
+  padding-left: 20vw;
+  padding-right: 20vw;
+}
+
+.info {
+  flex-direction: row;
+  .info-img {
+    justify-content: flex-end;
+    img {
+      width: 15vw;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    margin: 1em;
+  }
+  .content {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .info-parent {
+    padding: 0;
+  }
+
+  .leftside {
+    align-self: flex-start;
+  }
+
+  .info {
+    flex-direction: column !important;
+    flex-wrap: wrap;
+    text-align: justify;
+    gap: 0.5em;
+    .info-img {
+      justify-content: center;
+      img {
+        width: 50vw;
+        height: auto;
+      }
+    }
   }
 }

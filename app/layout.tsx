@@ -3,7 +3,7 @@ import "./globals.scss";
 
 // TODO: metadata + ico
 export const metadata: Metadata = {
-  title: "Amala Network",
+  title: "Public Safety",
   description: "",
 };
 
