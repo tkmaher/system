@@ -15,15 +15,18 @@ function Home() {
   const [isInfo, setIsInfo] = useState(false);
   const [trigger, setTrigger] = useState(false);
   const [id, setid] = useState(0);
-  const params = useSearchParams();
-  const n = params.get("id");
-  if (n && !isNaN(parseInt(n.toString()))) {
-    if (parseInt(n.toString()) !== id) {
-      setid(parseInt(n.toString()));
-    }
-  }
   const [list, setList] = useState<PortfolioItem[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const params = useSearchParams();
+
+  useEffect(() => {
+    const n = params.get("id");
+    if (n && !isNaN(parseInt(n.toString()))) {
+      if (parseInt(n.toString()) !== id) {
+        setid(parseInt(n.toString()));
+      }
+    }
+  }, [params]);
 
   async function getPortfolioItems() {
     await fetch(`${API_BASE}/api/portfolio`, {})
@@ -72,9 +75,12 @@ function Home() {
     <div>
       <TagProvider>
         <div className="header">
-          <Link className="switcher float-left" href="/" onClick={() => setIsInfo(false)}>
-          <span className="first">Health</span>+<span className="second">Recreation</span>
-          </Link>
+          <div className="switcher float-left flex items-center" >
+            <img src="teardrop.svg" className="teardrop"/>
+            <Link href="/">
+              <span className="first">Health</span>+<span className="second" onClick={() => setIsInfo(false)}>Recreation</span>
+            </Link>
+          </div>
           <div className="switcher float-right text-right">
             <a onClick={() => setIsInfo(e => !e)}>
               <span className={isInfo ? "first" : "second"}>Work</span>{isInfo ? "←" : "→"}<span className={isInfo ? "second" : "first"}>Info</span>

@@ -82,6 +82,13 @@ select {
     font-variation-settings: 'wght' 500;
     transition: font-variation-settings 0.2s ease-in-out;
   }
+  .teardrop {
+    height: 1em;
+    width: 0;
+    display: inline-block;
+    margin-right: 0;
+    transition: width 0.2s ease-in-out, margin-right 0.2s ease-in-out;
+  }
 
   &:hover {
     .first {
@@ -89,6 +96,10 @@ select {
     }
     .second {
       font-variation-settings: 'wght' 200;
+    }
+    .teardrop {
+      margin-right: 0.3em;
+      width: 1em;
     }
   }
 }
@@ -281,6 +292,7 @@ select {
 
   .leftside {
     align-self: flex-start;
+    width: 100%;
   }
 
   .info {
@@ -295,5 +307,9 @@ select {
         height: auto;
       }
     }
+  }
+
+  .item-block {
+    width: calc(33% - 0.5em);
   }
 }
