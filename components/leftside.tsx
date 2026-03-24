@@ -185,10 +185,10 @@ export function Info() {
                     <div className="flex flex-row info">
                         <div className="flex flex-col gap-2 basis-[50%] self-center flex-grow-0">
                             <div>
-                                <div className="bolded">Health+Recreation</div> is an independent web development studio based in Chicago, Illinois. It specializes in personalized development with an emphasis on modularity and customization.
+                                <div className="bolded">Health+Recreation</div> is an independent web development studio based in Chicago, Illinois. It specializes in personalized designs with an emphasis on modularity and customization.
                             </div>
                             <div>
-                                Websites are built from the ground up and designed at the strict discretion of the client.
+                                Services include full-stack web development, UI/UX design, graphic design, SEO, and web consulting.
                             </div>
                             <br/>
                             <div className="contact-link">
