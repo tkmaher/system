@@ -185,7 +185,7 @@ export function Info() {
                     <div className="flex flex-row info">
                         <div className="flex flex-col gap-2 basis-[50%] self-center flex-grow-0">
                             <div>
-                                <div className="bolded">Public Safety</div> is an independent web development studio based in Chicago, Illinois. It specializes in individualized development with an emphasis on client-centric modularity and customization.
+                                <div className="bolded">Health+Recreation</div> is an independent web development studio based in Chicago, Illinois. It specializes in personalized development with an emphasis on modularity and customization.
                             </div>
                             <div>
                                 Websites are built from the ground up and designed at the strict discretion of the client.
@@ -207,7 +207,7 @@ export function Info() {
                         </div>
                     </div>
                     <em className=" smaller text-center">
-                        Public Safety is the studio of <a href="https://otherseas1.com" target="_blank" className="hover-bold">otherseas1</a>. Portfolio available upon request.
+                        Health+Recreation is the studio of <a href="https://otherseas1.com" target="_blank" className="hover-bold">otherseas1</a>. Portfolio available upon request.
                     </em>
                 </motion.div>
 
