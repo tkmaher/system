@@ -4,6 +4,7 @@ import { PortfolioItem } from "./types/portfolio";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTags } from "@/components/contexts/tagcontext";
 import ReactMarkDown from "react-markdown";
+import Image from "next/image";
 
 export default function Rightside({ id, item }: { id: number; item: PortfolioItem }) {
     return (
@@ -139,10 +140,13 @@ function RightsideInner({ item }: { item: PortfolioItem }) {
             }}
         >
             <div className="media-wrapper">
-                <img
+                <Image
                     src={item.images[0]}
                     onLoad={() => setLoaded(true)}
                     style={{ opacity: playing ? 0 : 1 }}
+                    alt={item.name}
+                    width={800}
+                    height={800}
                 />
                 {item.video_url && (
                     <video
