@@ -118,11 +118,11 @@ export default function Page() {
         <div className={trigger ? 'zoom-in content' : 'content'} style={{ opacity: loaded ? 1 : 0 }}>
           {loaded && <>
               {isInfo && <Info />}
-              <Leftside id={id} setId={setId} list={list} />
               <Rightside id={id} setId={setId} list={list} />
             </>
           }
         </div>
+        {loaded && !isInfo && <Leftside id={id} setId={setId} list={list} />}
       </TagProvider>
     </div>
   );

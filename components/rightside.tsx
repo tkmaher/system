@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useMemo, useEffect, useCallback } from "react";
+import { useState, useRef, useMemo, useEffect, useLayoutEffect, useCallback } from "react";
 import { PortfolioItem } from "./types/portfolio";
 import { motion } from "framer-motion";
 import { useTags } from "@/components/contexts/tagcontext";
@@ -36,9 +36,7 @@ export default function Rightside({
 
     const listAlignment = useMemo(() => {
         return new Map(list.map((item, i) => [item.id, i]));
-    }, [list]);
-
-    const scrollToId = useCallback((targetId: number, behavior: ScrollBehavior) => {
+    }, [list]);    const scrollToId = useCallback((targetId: number, behavior: ScrollBehavior) => {
         const idx = sortedList.findIndex(item => (item.index ?? 0) === targetId);
         const ref = idx !== -1 ? itemRefs.current[idx] : null;
         if (!ref) return false;
@@ -52,6 +50,7 @@ export default function Rightside({
         return true;
     }, [sortedList]);
 
+    
     const updateLeftColumn = useCallback(() => {
         const container = containerRef.current;
         if (!container || sortedList.length === 0) return;
@@ -71,7 +70,7 @@ export default function Rightside({
         const t = upperTop === lowerTop ? 0 : Math.min(1, (scrollTop - lowerTop) / (upperTop - lowerTop));
     
         const getLeftY = (idx: number) => {
-            let offset = 0;
+            let offset = 0.0;
             for (let i = 0; i < idx; i++) {
                 offset += (leftItemRefs.current[i]?.offsetHeight ?? 0) + GAP_PX;
             }
@@ -99,7 +98,7 @@ export default function Rightside({
 
     // Helper: compute leftY for a given sortedList index from DOM refs
     const computeLeftY = useCallback((targetIdx: number) => {
-        let offset = 0;
+        let offset = 0.0;
         for (let i = 0; i < targetIdx; i++) {
             offset += (leftItemRefs.current[i]?.offsetHeight ?? 0) + GAP_PX;
         }
@@ -112,20 +111,30 @@ export default function Rightside({
         scrollToId(id, 'smooth');
     }, [id]); // intentionally omit scrollToId
 
-    useEffect(() => {
+    // 2. Tag/sort change → correct scroll and leftY before paint.
+    //    useLayoutEffect fires after React commits the reordered DOM but before
+    //    the browser paints, so the user never sees the wrong scroll position.
+    useLayoutEffect(() => {
+        const container = containerRef.current;
+        if (!container || sortedList.length === 0) return;
+
         const inList = sortedList.some(item => (item.index ?? 0) === id);
-        if (!inList && sortedList.length > 0) {
-            setId(sortedList[0].index ?? 0);
-        } else {
-            requestAnimationFrame(() => {
-                scrollToId(id, 'instant');
-                requestAnimationFrame(() => {
-                    const targetIdx = sortedList.findIndex(item => (item.index ?? 0) === id);
-                    if (targetIdx === -1) return;
-                    setLeftY(computeLeftY(targetIdx));
-                });
-            });
+        const targetId = inList ? id : (sortedList[0].index ?? 0);
+        if (!inList) setId(targetId);
+
+        const targetIdx = sortedList.findIndex(item => (item.index ?? 0) === targetId);
+        if (targetIdx === -1) return;
+
+        const ref = itemRefs.current[targetIdx];
+        if (ref) {
+            programmaticScroll.current = true;
+            container.scrollTop = ref.offsetTop;
+            const release = () => { programmaticScroll.current = false; };
+            container.addEventListener('scrollend', release, { once: true });
+            setTimeout(release, 100);
         }
+
+        setLeftY(computeLeftY(targetIdx));
     }, [sortedList]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // 3. Scroll listeners — left interpolates live, right only updates id on scrollend
