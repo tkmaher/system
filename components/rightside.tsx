@@ -6,7 +6,7 @@ import { useTags } from "@/components/contexts/tagcontext";
 import ReactMarkDown from "react-markdown";
 import Image from "next/image";
 
-const GAP_PX = 300; // must match the `gap: x` in globals.scss
+const GAP_PX = 1200; // must match the `gap: x` in globals.scss
 
 export default function Rightside({
     id,
@@ -150,9 +150,6 @@ export default function Rightside({
                         key={item.id}
                         ref={el => { itemRefs.current[i] = el; }}
                         className="rightside-item-snap sorted-list"
-                        style={{ 
-                            filter: (item.index ?? 0) === id ? "blur(0)" : `blur(${1 * Math.abs((item.index ?? 0) - id)}px)`,
-                        }}
                     >
                         <RightsideInner item={item} index={i}/>
                     </div>

@@ -2,8 +2,27 @@
 @import "@fontsource-variable/inter";
 
 :root {
-  --background: #ffffff;
+  --background: #f5f5f5;
   --foreground: #121212;
+
+  /* tag pill */
+  --tag-bg:       #e0e0e0;
+  --tag-bg-hover: #c0c0c0;
+
+  /* item block active/hover */
+  --block-active: #ececec;
+  --block-hover:  #e0e0e0;
+}
+
+[data-theme='dark'] {
+  --background: #1a1a1a;
+  --foreground: #c5c5c5;
+
+  --tag-bg:       #2e2e2e;
+  --tag-bg-hover: #404040;
+
+  --block-active: #2a2a2a;
+  --block-hover:  #333333;
 }
 
 body {
@@ -15,6 +34,7 @@ body {
   font-variation-settings: 'wght' 200;
   user-select: none;
   overflow-x: hidden;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
 a {
@@ -92,7 +112,7 @@ select {
     pointer-events: none;
     display: flex;
     flex-direction: column;
-    gap: 300;                       
+    gap: 1200;                       
     transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: transform;
     .sorted-list {
@@ -124,6 +144,8 @@ select {
 
 .width-half {
   bottom: 2em;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .width-full {
@@ -146,6 +168,7 @@ select {
     display: inline-block;
     margin-right: 0;
     transition: width 0.2s ease-in-out, margin-right 0.2s ease-in-out;
+    path: {stroke: var(--foreground)};
   }
 
   &:hover {
@@ -229,11 +252,11 @@ select {
 .item-block {
   width: 110.74px;
   height: 16px;
-  border: 0.5px solid var(--foreground);
   margin-right: 0.5em;
   margin-bottom: 0.5em;
   display: inline-block;
   background-color: var(--background);
+  border: 0.5px solid var(--foreground);
   cursor: pointer;
 }
 
@@ -244,7 +267,7 @@ select {
   margin-right: 1em;
   vertical-align: middle;
   min-width: 5em;
-  background-color: #e0e0e0;
+  background-color: var(--tag-bg);
   border-radius: 30px;
   cursor: pointer;
   transition: background-color 0.1s ease-in-out;
@@ -266,7 +289,7 @@ select {
   }
 
   &:hover {
-    background-color: #c0c0c0;
+    background-color: var(--tag-bg-hover);
     & > :first-child {
       width: 1em;
       opacity: 1;
