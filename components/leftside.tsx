@@ -3,92 +3,85 @@
 import { useEffect, useState } from "react";
 import { PortfolioItem } from "@/components/types/portfolio";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
-import { useRouter } from 'next/navigation';
 import { useTags } from "@/components/contexts/tagcontext";
 
-export default function Leftside({ id, list }: { id: number, list: PortfolioItem[] }) {
+export default function Leftside({ id, setId, list }: { id: number; setId: (id: number) => void; list: PortfolioItem[] }) {
     return (
         <AnimatePresence mode="wait">
-            <LeftsideInner id={id} list={list} />
+            <LeftsideInner id={id} setId={setId} list={list} />
         </AnimatePresence>
     );
 }
 
-export function LeftsideInner({ id, list }: { id: number, list: PortfolioItem[] }) {
+export function LeftsideInner({ id, setId, list }: { id: number; setId: (id: number) => void; list: PortfolioItem[] }) {
     const [timeline, setTimeline] = useState(false);
-    const [oldNew, setOldNew] = useState(false);
-    const { tags, setTags, tagList, setTagList } = useTags();
-
-    const router = useRouter();
+    const { tags, setTags, tagList, setTagList, oldNew, setOldNew } = useTags();
 
     useEffect(() => {
         for (const item of list) {
             item.tags.forEach((tag: string) => {
-                if (tag != "") setTagList(prevList => new Set(prevList).add(tag));
+                if (tag !== "") setTagList(prev => new Set(prev).add(tag));
             });
         }
     }, [list]);
-    
 
     function TagSelector() {
         return (
-            <select className={tagList.size > 0 ? "tag" : "tag pointer-events-none opacity-50"}
-            
-                 onChange={(e) => {
-                    setTags(prevList => prevList.add(e.target.value));
-                    setTagList(prevList => {
-                        const newList = new Set(prevList);
-                        newList.delete(e.target.value);
-                        return newList;
-                    });
-                }} defaultValue="">
-                    <option className="text-center" value="">+ tag</option>
-                    {Array.from(tagList).map((tag, i) => (
-                        <option key={i} value={tag}>{tag}</option>
-                    ))}
+            <select
+                className={tagList.size > 0 ? "tag" : "tag pointer-events-none opacity-50"}
+                onChange={e => {
+                    setTags(prev => prev.add(e.target.value));
+                    setTagList(prev => { const n = new Set(prev); n.delete(e.target.value); return n; });
+                }}
+                defaultValue=""
+            >
+                <option className="text-center" value="">+ tag</option>
+                {Array.from(tagList).map((tag, i) => (
+                    <option key={i} value={tag}>{tag}</option>
+                ))}
             </select>
-        )
+        );
     }
 
     function Tag({ name }: { name: string }) {
         return (
-            <div className="tag" onClick={()=> {
-                setTags(prevList => {
-                    const newList = new Set(prevList);
-                    newList.delete(name);
-                    return newList;
-                });
-                setTagList(prevList => prevList.add(name));
+            <div className="tag" onClick={() => {
+                setTags(prev => { const n = new Set(prev); n.delete(name); return n; });
+                setTagList(prev => prev.add(name));
             }}>
-                <div className="float-left">
-                    ×
-                </div>
-                <div className="float-right">
-                    {name}
-                </div>
-                
+                <div className="float-left">×</div>
+                <div className="float-right">{name}</div>
             </div>
-        )
+        );
     }
 
-    function ItemBlock({ item, index }: { item: PortfolioItem, index: number }) {
+    function ItemBlock({ item, index }: { item: PortfolioItem; index: number }) {
         const matchesTags = tags.size === 0 || [...tags].every((tag: string) => item.tags.includes(tag));
         if (!matchesTags) return null;
+    
+        const isActive = index === id;
+    
         return (
             <motion.div
-                className={index == id ? "item-block grayed" : "item-block"}
+                className="item-block"
+                animate={isActive ? "active" : "inactive"}
+                variants={{
+                    active: { backgroundColor: "#ececec" },
+                    inactive: { backgroundColor: "#ffffff" }
+                }}
+                whileHover={{ backgroundColor: "#e0e0e0" }}
+                transition={{ duration: 0.25, ease: "easeInOut" }}
                 layoutId={`item-${item.id}`}
-                layoutDependency={[timeline, oldNew]}
-                onClick={() => router.push(`?id=${item.index}`)}
+                onClick={() => setId(item.index ?? index)}
             />
-        )
+        );
     }
 
     return (
         <motion.div
-            className="leftside"
+            className="leftside width-half"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1}}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
         >
@@ -100,7 +93,8 @@ export function LeftsideInner({ id, list }: { id: number, list: PortfolioItem[] 
                 </div>
                 <div className="switcher smaller">
                     <a onClick={() => setOldNew(e => !e)}>
-                        <span className={oldNew ? "first" : "second"}>new→old</span> <span className={oldNew ? "second" : "first"}>old→new</span>
+                        <span className={oldNew ? "first" : "second"}>new→old</span>{" "}
+                        <span className={oldNew ? "second" : "first"}>old→new</span>
                     </a>
                 </div>
                 <motion.div className="flex flex-row smaller mt-1.5">
@@ -110,11 +104,11 @@ export function LeftsideInner({ id, list }: { id: number, list: PortfolioItem[] 
                                 key={i}
                                 initial={{ opacity: 0, width: 0 }}
                                 animate={{ opacity: 1, width: "fit-content" }}
-                                exit={{ opacity: 0, width: 0 }}          
+                                exit={{ opacity: 0, width: 0 }}
                                 transition={{ duration: 0.2 }}
-                                layout                          
+                                layout
                             >
-                                <Tag name={tag}/>
+                                <Tag name={tag} />
                             </motion.div>
                         ))}
                         <TagSelector />
@@ -139,14 +133,14 @@ export function LeftsideInner({ id, list }: { id: number, list: PortfolioItem[] 
                                         key={year}
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0 }}          
+                                        exit={{ opacity: 0 }}
                                         transition={{ duration: 0.2 }}
-                                        layout                          
+                                        layout
                                     >
                                         <div className="year">{year}</div>
                                         <div className="flex flex-wrap flex-row">
-                                            {items.map((item) => 
-                                                <ItemBlock item={item} index={item.index ? item.index : 0} key={item.id} />
+                                            {items.map(item =>
+                                                <ItemBlock item={item} index={item.index ?? 0} key={item.id} />
                                             )}
                                         </div>
                                     </motion.div>
@@ -158,7 +152,7 @@ export function LeftsideInner({ id, list }: { id: number, list: PortfolioItem[] 
                                             ? a.date.getTime() - b.date.getTime()
                                             : b.date.getTime() - a.date.getTime()
                                         )
-                                        .map((item) => <ItemBlock item={item} index={item.index ?? 0} key={item.id} />)
+                                        .map(item => <ItemBlock item={item} index={item.index ?? 0} key={item.id} />)
                                     }
                                 </div>
                             )}
@@ -167,12 +161,12 @@ export function LeftsideInner({ id, list }: { id: number, list: PortfolioItem[] 
                 </LayoutGroup>
             </div>
         </motion.div>
-    )
+    );
 }
 
 export function Info() {
     return (
-        <motion.div className="leftside">
+        <motion.div className="leftside width-full">
             <AnimatePresence mode="sync">
                 <motion.div
                     className="flex flex-col gap-20 max-width-[50%] info-parent align-items-center"
@@ -180,7 +174,7 @@ export function Info() {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    layout                          
+                    layout
                 >
                     <div className="flex flex-row info">
                         <div className="flex flex-col gap-2 basis-[50%] self-center flex-grow-0">
@@ -190,29 +184,23 @@ export function Info() {
                             <div>
                                 Services include full-stack web development, UI/UX design, graphic design, SEO, and web consulting.
                             </div>
-                            <br/>
+                            <br />
                             <div className="contact-link">
                                 <a className="hover-bold child underline" target="_blank" href="mailto:[INSERT EMAIL]">Contact</a>
                                 <em className="child">→name@domain.com</em>
-                                <br/>
-                                <em className="child smaller">Include a general outline of your project. Rates are determined based on time commitment and hosting/server costs.</em> 
+                                <br />
+                                <em className="child smaller">Include a general outline of your project. Rates are determined based on time commitment and hosting/server costs.</em>
                             </div>
-                            
                         </div>
                         <div className="basis-[50%] flex items-center info-img">
-                            <img 
-                                src="sign.svg" 
-                                draggable="false" 
-                            /> 
+                            <img src="sign.svg" draggable="false" />
                         </div>
                     </div>
-                    <em className=" smaller text-center">
+                    <em className="smaller text-center">
                         Health+Recreation is the studio of <a href="https://otherseas1.com" target="_blank" className="hover-bold">otherseas1</a>. Portfolio available upon request.
                     </em>
                 </motion.div>
-
             </AnimatePresence>
-                
         </motion.div>
-    )
+    );
 }

@@ -2,81 +2,82 @@
 import Clock from "@/components/clock";
 import Leftside, { Info } from "@/components/leftside";
 import Rightside from "@/components/rightside";
-import { useSearchParams } from 'next/navigation';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { PortfolioItem } from "@/components/types/portfolio";
 import Link from "next/link";
 import { TagProvider } from '@/components/contexts/tagcontext';
-import { Suspense } from "react";
 
-const API_BASE = "https://blue-river-ebb7.tomaszkkmaher.workers.dev"
+const API_BASE = "https://blue-river-ebb7.tomaszkkmaher.workers.dev";
 
-function Home() {
+function toSlug(name: string) {
+  return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+}
+
+export default function Page() {
   const [isInfo, setIsInfo] = useState(false);
   const [trigger, setTrigger] = useState(false);
-  const [id, setid] = useState(0);
+  const [id, setId] = useState(0);
   const [list, setList] = useState<PortfolioItem[]>([]);
   const [loaded, setLoaded] = useState(false);
-  const params = useSearchParams();
-
-  useEffect(() => {
-    const n = params.get("id");
-    if (n && !isNaN(parseInt(n.toString()))) {
-      if (parseInt(n.toString()) !== id) {
-        setid(parseInt(n.toString()));
-      }
-    }
-  }, [params]);
+  const initialUrlParsed = useRef(false);
 
   async function getPortfolioItems() {
-    await fetch(`${API_BASE}/api/portfolio`, {})
-      .then((res) => res.json())
-      .then((data) => {
-        let output: PortfolioItem[] = [];
-        let i = 0;
-        for (const item of data.items) {
-            output.push({
-                id: item.id,
-                name: item.name,
-                body: item.body,
-                client: item.client,
-                tags: item.tags.split(','),
-                images: item.images,
-                video_url: item.video_url ? item.video_url : null,
-                date: new Date(item.date),
-                index: i,
-                link: item.link ? item.link : null,
-            });
-            
-            i++;
-        }
-        if (id >= output.length) {
-          setid(0);
-        }
+    fetch(`${API_BASE}/api/portfolio`)
+      .then(res => res.json())
+      .then(data => {
+        const output: PortfolioItem[] = data.items.map((item: any, i: number) => ({
+          id: item.id,
+          name: item.name,
+          body: item.body,
+          client: item.client,
+          tags: item.tags.split(','),
+          images: item.images,
+          video_url: item.video_url ?? null,
+          date: new Date(item.date),
+          index: i,
+          link: item.link ?? null,
+        }));
         setList(output);
         setLoaded(true);
       })
-      .catch((err) => {
-        console.error("Error fetching portfolio items:", err);
-      });
+      .catch(err => console.error("Error fetching portfolio items:", err));
   }
 
+  useEffect(() => { getPortfolioItems(); }, []);
+
+  // Parse ?id=slug from URL once after list loads
   useEffect(() => {
-      getPortfolioItems();
-  }, []);
+    if (!list.length || initialUrlParsed.current) return;
+    initialUrlParsed.current = true;
+
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get('id');
+    if (!slug) return;
+
+    const match = list.find(item => toSlug(item.name) === decodeURIComponent(slug).toLowerCase());
+    if (match) setId(match.index ?? 0);
+  }, [list]);
+
+  // Keep URL in sync with active id
+  useEffect(() => {
+    if (!list.length || isInfo) return;
+    const item = list.find(it => (it.index ?? 0) === id);
+    if (!item) return;
+    window.history.replaceState(null, '', `?id=${toSlug(item.name)}`);
+  }, [id, list, isInfo]);
 
   useEffect(() => {
     setTrigger(true);
-    const timer = setTimeout(() => setTrigger(false), 500); 
+    const timer = setTimeout(() => setTrigger(false), 500);
     return () => clearTimeout(timer);
-  }, [isInfo]); 
+  }, [isInfo]);
 
   return (
     <div>
       <TagProvider>
         <div className="header">
-          <div className="switcher float-left flex items-center" >
-            <img src="teardrop.svg" className="teardrop"/>
+          <div className="switcher float-left flex items-center">
+            <img src="teardrop.svg" className="teardrop" />
             <Link href="/">
               <span className="first">Health</span>+<span className="second" onClick={() => setIsInfo(false)}>Recreation</span>
             </Link>
@@ -85,29 +86,21 @@ function Home() {
             <a onClick={() => setIsInfo(e => !e)}>
               <span className={isInfo ? "first" : "second"}>Work</span>{isInfo ? "←" : "→"}<span className={isInfo ? "second" : "first"}>Info</span>
             </a>
-            <Clock/>
+            <Clock />
           </div>
         </div>
-        
-        <div className={trigger ? 'zoom-in content ' : 'content'} style={{opacity: loaded ? 1 : 0}}>
-          {isInfo ?
-            loaded && <Info/> :
+
+        <div className={trigger ? 'zoom-in content' : 'content'} style={{ opacity: loaded ? 1 : 0 }}>
+          {isInfo ? (
+            loaded && <Info />
+          ) : (
             <>
-              {loaded && <Leftside id={id} list={list} />}
-              {loaded && <Rightside id={id} item={list[id]} />}
+              {loaded && <Leftside id={id} setId={setId} list={list} />}
+              {loaded && <Rightside id={id} setId={setId} list={list} />}
             </>
-          }
-          
+          )}
         </div>
       </TagProvider>
     </div>
   );
-}
-
-export default function Page() {
-  return (
-    <Suspense fallback={null}>
-      <Home />
-    </Suspense>
-  )
 }

@@ -11,9 +11,7 @@ body {
   color: var(--foreground);
   font-family: "Inter Variable", sans-serif;
   font-size: 11px;
-  margin-top: 2.2em;
   margin-left: 2em;
-  margin-right: 2em;
   font-variation-settings: 'wght' 200;
   user-select: none;
   overflow-x: hidden;
@@ -35,13 +33,10 @@ select {
 }
 
 .rightside {
-  transition: opacity 0.5s ease-in-out;
   perspective: 1000px;
-  opacity: 0;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-  flex-basis: 100%;
+  width: 100%;
   text-align: left;
   margin-bottom: 0.5em;
   gap: 1.2em;
@@ -49,28 +44,57 @@ select {
   .description {
     display: flex;
     flex-direction: row;
-    div {
-      flex-grow: 1;
-    }
+    div { flex-grow: 1; }
     a {
       justify-self: center;
       align-self: center;
       flex-grow: 1;
       max-width: 2em;
-      img {
-        max-width: 1.5em;
-      }
+      img { max-width: 1.5em; }
     }
   }
 }
 
-.leftside {
+.rightside-scroll-container {
+  flex: 1 1 0;
+  flex-basis: 100%;
+  min-height: 0;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.rightside-item-snap {
+  scroll-snap-align: start;
+  min-height: 100%;
+  max-width: 50vw;
+  min-width: 50vw;
+  margin-right: 2em;
+
+  justify-self: flex-end;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-  flex-basis: 100%;
+  justify-content: center;
+  padding-bottom: 1.5em;
+}
+
+.leftside {
+  display: flex;
+  position: fixed;
+  flex-direction: column;
+
   align-self: center;
   min-height: 200px;
+}
+
+.width-half {
+  max-width: calc(50vw - 2em);
+}
+
+.width-full {
+  max-width: 100%;
+  position: relative;
 }
 
 .switcher {
@@ -139,6 +163,10 @@ select {
 
 .header {
   height: 5em;
+  width: calc(100vw - 4em);
+  margin-top: 2.2em;
+  position: fixed;
+  z-index: 999;
 }
 
 .content {
@@ -147,7 +175,7 @@ select {
   display: flex;
   flex-direction: row;
   gap: 1em;
-  height: calc(100vh - 5em - 4em);
+  height: calc(100vh);
 }
 
 @keyframes rollout {
@@ -168,16 +196,9 @@ select {
   margin-bottom: 0.5em;
   display: inline-block;
   background-color: var(--background);
-  transition: background-color 0.2s ease-in-out;
   cursor: pointer;
-  &:hover {
-    background-color: #e0e0e0;
-  }
 }
 
-.grayed {
-  background-color:#ececec;
-}
 
 .tag {
   display: flex;
@@ -188,9 +209,7 @@ select {
   background-color: #e0e0e0;
   border-radius: 30px;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-
-
+  transition: background-color 0.1s ease-in-out;
 
   & > :first-child {
     flex-grow: 0;
