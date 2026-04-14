@@ -30,6 +30,7 @@ export default function Page() {
   const [id, setId] = useState(0);
   const [list, setList] = useState<PortfolioItem[]>([]);
   const [loaded, setLoaded] = useState(false);
+  const [theme, setTheme] = useState('light');
   const initialUrlParsed = useRef(false);
 
   async function getPortfolioItems() {
@@ -54,7 +55,11 @@ export default function Page() {
       .catch(err => console.error("Error fetching portfolio items:", err));
   }
 
-  useEffect(() => { getPortfolioItems(); }, []);
+  useEffect(() => { 
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setTheme(systemPrefersDark ? 'dark' : 'light');
+    getPortfolioItems(); 
+  }, []);
 
   // Parse ?id=slug from URL once after list loads
   useEffect(() => {
@@ -83,8 +88,6 @@ export default function Page() {
     return () => clearTimeout(timer);
   }, [isInfo]);
 
-  const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const [theme, setTheme] = useState((systemPrefersDark ? 'dark' : 'light'));
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
