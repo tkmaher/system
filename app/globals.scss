@@ -41,16 +41,28 @@ select {
   margin-bottom: 0.5em;
   gap: 1.2em;
   align-self: center;
-  .description {
+  
+}
+
+.description {
+  display: flex;
+  flex-direction: column;
+  .title {
     display: flex;
     flex-direction: row;
-    div { flex-grow: 1; }
-    a {
-      justify-self: center;
-      align-self: center;
+    width: 100%;
+    div {
       flex-grow: 1;
-      max-width: 2em;
-      img { max-width: 1.5em; }
+
+    }
+  }
+  a {
+    justify-self: flex-end;
+    align-self: flex-start;
+    width: 2em;
+
+    img { 
+      max-width: 1.5em; 
     }
   }
 }
@@ -63,6 +75,20 @@ select {
   scroll-snap-type: y mandatory;
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
+  display: flex;
+  justify-content: flex-end;
+
+  .left-desc-container {
+    position: fixed;
+    left: 2em;
+    top: 0;
+    width: calc(50vw - 4em);
+    display: flex;
+    flex-direction: column;
+    gap: 5em;                       
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform;
+  }
 }
 
 .rightside-item-snap {
@@ -175,7 +201,7 @@ select {
   display: flex;
   flex-direction: row;
   gap: 1em;
-  height: calc(100vh);
+  height: calc(100dvh);
 }
 
 @keyframes rollout {

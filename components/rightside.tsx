@@ -6,6 +6,8 @@ import { useTags } from "@/components/contexts/tagcontext";
 import ReactMarkDown from "react-markdown";
 import Image from "next/image";
 
+const GAP_PX = 32; // must match the `gap: 2em` above (2 * 16px base)
+
 export default function Rightside({
     id,
     setId,
@@ -17,6 +19,9 @@ export default function Rightside({
 }) {
     const containerRef = useRef<HTMLDivElement>(null);
     const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const leftContainerRef = useRef<HTMLDivElement>(null);
+    const leftItemRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const [leftY, setLeftY] = useState(0);
     const programmaticScroll = useRef(false);
     const { tags, oldNew } = useTags();
 
@@ -29,88 +34,151 @@ export default function Rightside({
             );
     }, [list, tags.size, oldNew]);
 
-    // Reposition (instant) when filter/sort changes, smooth when id changes via leftside click
+    // Recompute left container Y whenever active item changes
+    const activeIdx = sortedList.findIndex(item => (item.index ?? 0) === id);
+
+
+    // scrollToId — remove all leftRef logic, left is no longer scrolled
     const scrollToId = useCallback((targetId: number, behavior: ScrollBehavior) => {
         const idx = sortedList.findIndex(item => (item.index ?? 0) === targetId);
         const ref = idx !== -1 ? itemRefs.current[idx] : null;
         if (!ref) return false;
         const container = containerRef.current!;
-        if (Math.abs(ref.offsetTop - container.scrollTop) < 4) return true; // already there
+        if (Math.abs(ref.offsetTop - container.scrollTop) < 4) return true;
         programmaticScroll.current = true;
         ref.scrollIntoView({ behavior, block: 'start' });
-        // Reset flag once scroll settles — fall back to timeout if scrollend doesn't fire
         const reset = () => { programmaticScroll.current = false; };
         container.addEventListener('scrollend', reset, { once: true });
-        setTimeout(reset, 900);
+        setTimeout(reset, 100);
         return true;
     }, [sortedList]);
 
-    // When id changes from a leftside click → smooth scroll
+    
+    const updateLeftColumn = useCallback(() => {
+        const container = containerRef.current;
+        if (!container || sortedList.length === 0) return;
+        const scrollTop = container.scrollTop;
+    
+        // Find which two right snap points we're between
+        let lowerIdx = 0;
+        for (let i = 0; i < itemRefs.current.length; i++) {
+            if (itemRefs.current[i] && itemRefs.current[i]!.offsetTop <= scrollTop + 1) {
+                lowerIdx = i;
+            }
+        }
+        const upperIdx = Math.min(lowerIdx + 1, sortedList.length - 1);
+    
+        const lowerTop = itemRefs.current[lowerIdx]?.offsetTop ?? 0;
+        const upperTop = itemRefs.current[upperIdx]?.offsetTop ?? lowerTop;
+        const t = upperTop === lowerTop ? 0 : Math.min(1, (scrollTop - lowerTop) / (upperTop - lowerTop));
+    
+        const getLeftY = (idx: number) => {
+            let offset = 0;
+            for (let i = 0; i < idx; i++) {
+                offset += (leftItemRefs.current[i]?.offsetHeight ?? 0) + GAP_PX;
+            }
+            const h = leftItemRefs.current[idx]?.offsetHeight ?? 0;
+            return window.innerHeight / 2 - offset - h / 2;
+        };
+    
+        setLeftY(getLeftY(lowerIdx) + (getLeftY(upperIdx) - getLeftY(lowerIdx)) * t);
+    }, [sortedList]);
+    
+    // RIGHT COLUMN: only update `id` on scrollend, never on scroll
+    const updateActiveItem = useCallback(() => {
+        if (programmaticScroll.current) return;
+        const container = containerRef.current;
+        if (!container || sortedList.length === 0) return;
+        const scrollTop = container.scrollTop;
+        let closest = 0, minDist = Infinity;
+        itemRefs.current.forEach((ref, i) => {
+            if (!ref) return;
+            const dist = Math.abs(ref.offsetTop - scrollTop);
+            if (dist < minDist) { minDist = dist; closest = i; }
+        });
+        setId(sortedList[closest]?.index ?? closest);
+    }, [sortedList, setId]);
+
+    // 1. Button press / leftside click → scroll right column
     useEffect(() => {
         scrollToId(id, 'smooth');
-    }, [id]); // intentionally omit scrollToId to avoid firing on sortedList changes here
+    }, [id]); // intentionally omit scrollToId
 
-    // When sortedList changes (tag/sort toggle) → instant reposition to keep current item in view
+    // 2. Button press → snap left column to active item
+    useEffect(() => {
+        if (activeIdx === -1) return;
+        let offsetToActive = 0;
+        for (let i = 0; i < activeIdx; i++) {
+            offsetToActive += (leftItemRefs.current[i]?.offsetHeight ?? 0) + GAP_PX;
+        }
+        const activeHeight = leftItemRefs.current[activeIdx]?.offsetHeight ?? 0;
+        setLeftY(window.innerHeight / 2 - offsetToActive - activeHeight / 2);
+    }, [activeIdx, sortedList]);
+
+    // 3. Tag/sort change → instant reposition
     useEffect(() => {
         const inList = sortedList.some(item => (item.index ?? 0) === id);
         if (!inList && sortedList.length > 0) {
-            // Current item filtered out — jump to first
             setId(sortedList[0].index ?? 0);
         } else {
             requestAnimationFrame(() => scrollToId(id, 'instant'));
         }
     }, [sortedList]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // Track active item during user scroll
-    const updateActiveItem = useCallback(() => {
-        if (programmaticScroll.current) return;
-        const container = containerRef.current;
-        if (!container || sortedList.length === 0) return;
-        const scrollTop = container.scrollTop;
-        let closest = 0;
-        let minDist = Infinity;
-        itemRefs.current.forEach((ref, i) => {
-            if (!ref) return;
-            const dist = Math.abs(ref.offsetTop - scrollTop);
-            if (dist < minDist) { minDist = dist; closest = i; }
-        });
-        const newId = sortedList[closest]?.index ?? closest;
-        setId(newId);
-    }, [sortedList, setId]);
-
+    // 4. Scroll listeners — left interpolates live, right only updates id on scrollend
     useEffect(() => {
         const container = containerRef.current;
         if (!container) return;
-        let debounceTimer: ReturnType<typeof setTimeout>;
-        const onScroll = () => {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(updateActiveItem, 50);
-        };
+        container.addEventListener('scroll', updateLeftColumn);
         container.addEventListener('scrollend', updateActiveItem);
-        container.addEventListener('scroll', onScroll);
+        container.addEventListener('scrollend', updateLeftColumn);
         return () => {
+            container.removeEventListener('scroll', updateLeftColumn);
             container.removeEventListener('scrollend', updateActiveItem);
-            container.removeEventListener('scroll', onScroll);
-            clearTimeout(debounceTimer);
+            container.removeEventListener('scrollend', updateLeftColumn);
         };
-    }, [updateActiveItem]);
+    }, [updateLeftColumn, updateActiveItem]);
+
 
     return (
         <div ref={containerRef} className="rightside-scroll-container">
-            {sortedList.map((item, i) => (
-                <div
-                    key={item.id}
-                    ref={el => { itemRefs.current[i] = el; }}
-                    className="rightside-item-snap"
-                >
-                    <RightsideInner item={item} />
-                </div>
-            ))}
-            {sortedList.length === 0 && <div
-                className="rightside-item-snap"
+
+            {/* Left: fixed column, translated so active item sits at 50vh */}
+            <div
+                ref={leftContainerRef}
+                className="left-desc-container"
+                style={{ 
+                    transform: `translateY(${leftY}px)`,
+                }}
             >
-                no items to display
-            </div>}
+                {sortedList.map((item, i) => (
+                    <div 
+                        key={item.id} ref={el => { leftItemRefs.current[i] = el; }}
+                        style={{ opacity: (item.index ?? 0) === id ? 1 : 0.5,
+                            transition: 'opacity 0.3s',
+                         }}
+                    >
+                        <RightsideDesc item={item} />
+                    </div>
+                ))}
+            </div>
+
+            {/* Right: unchanged */}
+            <div className="right">
+                {sortedList.map((item, i) => (
+                    <div
+                        key={item.id}
+                        ref={el => { itemRefs.current[i] = el; }}
+                        className="rightside-item-snap"
+                    >
+                        <RightsideInner item={item} />
+                    </div>
+                ))}
+            </div>
+
+            {sortedList.length === 0 && (
+                <div className="rightside-item-snap">no items to display</div>
+            )}
         </div>
     );
 }
@@ -174,27 +242,7 @@ function RightsideInner({ item }: { item: PortfolioItem }) {
         setRotation({ x: 0, y: 0 });
     };
 
-    const { tags, setTagList, setTags } = useTags();
-
-    function Tag({ name }: { name: string }) {
-        return (
-            <div className="tag" onMouseDown={() => {
-                if (tags.has(name)) {
-                    setTagList(prev => prev.add(name));
-                    setTags(prev => { const n = new Set(prev); n.delete(name); return n; });
-                } else {
-                    setTags(prev => prev.add(name));
-                    setTagList(prev => { const n = new Set(prev); n.delete(name); return n; });
-                }
-            }}>
-                <div className="tag-permanent">{name}</div>
-            </div>
-        );
-    }
-
-    const TagMemo = useMemo(() => {
-        return item.tags.map((tag, i) => <Tag key={i} name={tag} />);
-    }, [tags]); // eslint-disable-line react-hooks/exhaustive-deps
+    
 
     return (
         <motion.div
@@ -245,23 +293,53 @@ function RightsideInner({ item }: { item: PortfolioItem }) {
                     </div>
                 )}
             </div>
-            <div className="description">
+            
+        </motion.div>
+    );
+}
+
+function RightsideDesc({ item }: { item: PortfolioItem }) {
+    const { tags, setTagList, setTags } = useTags();
+
+    function Tag({ name }: { name: string }) {
+        return (
+            <div className="tag" onMouseDown={() => {
+                if (tags.has(name)) {
+                    setTagList(prev => prev.add(name));
+                    setTags(prev => { const n = new Set(prev); n.delete(name); return n; });
+                } else {
+                    setTags(prev => prev.add(name));
+                    setTagList(prev => { const n = new Set(prev); n.delete(name); return n; });
+                }
+            }}>
+                <div className="tag-permanent">{name}</div>
+            </div>
+        );
+    }
+
+    const TagMemo = useMemo(() => {
+        return item.tags.map((tag, i) => <Tag key={i} name={tag} />);
+    }, [tags]); // eslint-disable-line react-hooks/exhaustive-deps
+    return (
+        <div className="description" style={{}}>
+            <div className="title">
                 <div>
                     <div className="bolded">{item.name}</div>
                     <div>{item.client} • {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long' }).format(item.date)}</div>
                 </div>
                 {item.link &&
-                    <a href={item.link} target="_blank">
-                        <img src="button-linkout.svg" />
-                    </a>
-                }
+                <a href={item.link} target="_blank">
+                    <img src="button-linkout.svg" />
+                </a>
+            }
             </div>
+
             <div className="description">
                 <ReactMarkDown>{item.body}</ReactMarkDown>
             </div>
             <div className="flex flex-row smaller mt-1.5">
                 {TagMemo}
             </div>
-        </motion.div>
+        </div>
     );
 }
