@@ -36,7 +36,7 @@ select {
   perspective: 1000px;
   display: flex;
   flex-direction: column;
-  width: 100%;
+  max-width: 60vw;
   text-align: left;
   margin-bottom: 0.5em;
   gap: 1.2em;
@@ -47,6 +47,8 @@ select {
 .description {
   display: flex;
   flex-direction: column;
+  flex-grow: 1;
+
   .title {
     display: flex;
     flex-direction: row;
@@ -77,19 +79,26 @@ select {
   &::-webkit-scrollbar { display: none; }
   display: flex;
 
-  .left-desc-container {
-    position: fixed;
-    right: 2em;
-    top: 0;
-    width: calc(30dvw);
+  .right {
     display: flex;
     flex-direction: column;
-    gap: 120;                       
+    width: 100%;
+  }
+
+  .left-desc-container {
+    position: fixed;
+    top: 0;
+    width: calc(100dvw - 4em);
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 300;                       
     transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: transform;
     .sorted-list {
+      pointer-events: all;
       transition: opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
-
+      width: 30dvw;
     }
   }
 }
@@ -97,8 +106,7 @@ select {
 .rightside-item-snap {
   scroll-snap-align: start;
   min-height: 100%;
-  max-width: 60vw;
-  min-width: 60vw;
+
 
   display: flex;
   flex-direction: column;

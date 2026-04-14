@@ -6,7 +6,7 @@ import { useTags } from "@/components/contexts/tagcontext";
 import ReactMarkDown from "react-markdown";
 import Image from "next/image";
 
-const GAP_PX = 120; // must match the `gap: x` in globals.scss
+const GAP_PX = 300; // must match the `gap: x` in globals.scss
 
 export default function Rightside({
     id,
@@ -154,7 +154,7 @@ export default function Rightside({
                             filter: (item.index ?? 0) === id ? "blur(0)" : `blur(${1 * Math.abs((item.index ?? 0) - id)}px)`,
                         }}
                     >
-                        <RightsideInner item={item} />
+                        <RightsideInner item={item} index={i}/>
                     </div>
                 ))}
             </div>
@@ -171,6 +171,7 @@ export default function Rightside({
                         style={{ opacity: (item.index ?? 0) === id ? 1 : 0.5,
                             filter: (item.index ?? 0) === id ? "blur(0)" : `blur(${1 * Math.abs((item.index ?? 0) - id)}px)`,
                             cursor: (item.index ?? 0) === id ? "default" : "pointer",
+                            alignSelf: i % 2 == 0 ? "flex-start" : "flex-end",
                         }}
                         className="sorted-list"
                         onClick={() => setId(item.index ?? 0)}
@@ -189,7 +190,7 @@ export default function Rightside({
     );
 }
 
-function RightsideInner({ item }: { item: PortfolioItem }) {
+function RightsideInner({ item, index }: { item: PortfolioItem, index: number }) {
     const [loaded, setLoaded] = useState(false);
     const [rotation, setRotation] = useState({ x: 0, y: 0 });
     const [dragging, setDragging] = useState(false);
@@ -264,6 +265,7 @@ function RightsideInner({ item }: { item: PortfolioItem }) {
                 transition: dragging ? "none" : "transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
                 cursor: dragging ? "grabbing" : "grab",
                 transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
+                alignSelf: index % 2 == 0 ? "flex-end" : "flex-start"
             }}
         >
             <div className="media-wrapper">
