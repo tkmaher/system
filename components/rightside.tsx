@@ -6,7 +6,7 @@ import { useTags } from "@/components/contexts/tagcontext";
 import ReactMarkDown from "react-markdown";
 import Image from "next/image";
 
-const GAP_PX = 32; // must match the `gap: 2em` above (2 * 16px base)
+const GAP_PX = 120; // must match the `gap: x` in globals.scss
 
 export default function Rightside({
     id,
@@ -143,7 +143,21 @@ export default function Rightside({
     return (
         <div ref={containerRef} className="rightside-scroll-container">
 
-            {/* Left: fixed column, translated so active item sits at 50vh */}
+            {/* Right: unchanged */}
+            <div className="right">
+                {sortedList.map((item, i) => (
+                    <div
+                        key={item.id}
+                        ref={el => { itemRefs.current[i] = el; }}
+                        className="rightside-item-snap sorted-list"
+                        style={{ 
+                            filter: (item.index ?? 0) === id ? "blur(0)" : `blur(${1 * Math.abs((item.index ?? 0) - id)}px)`,
+                        }}
+                    >
+                        <RightsideInner item={item} />
+                    </div>
+                ))}
+            </div>
             <div
                 ref={leftContainerRef}
                 className="left-desc-container"
@@ -155,26 +169,18 @@ export default function Rightside({
                     <div 
                         key={item.id} ref={el => { leftItemRefs.current[i] = el; }}
                         style={{ opacity: (item.index ?? 0) === id ? 1 : 0.5,
-                            transition: 'opacity 0.3s',
-                         }}
+                            filter: (item.index ?? 0) === id ? "blur(0)" : `blur(${1 * Math.abs((item.index ?? 0) - id)}px)`,
+                            cursor: (item.index ?? 0) === id ? "default" : "pointer",
+                        }}
+                        className="sorted-list"
+                        onClick={() => setId(item.index ?? 0)}
                     >
                         <RightsideDesc item={item} />
                     </div>
                 ))}
             </div>
 
-            {/* Right: unchanged */}
-            <div className="right">
-                {sortedList.map((item, i) => (
-                    <div
-                        key={item.id}
-                        ref={el => { itemRefs.current[i] = el; }}
-                        className="rightside-item-snap"
-                    >
-                        <RightsideInner item={item} />
-                    </div>
-                ))}
-            </div>
+            
 
             {sortedList.length === 0 && (
                 <div className="rightside-item-snap">no items to display</div>
@@ -321,24 +327,27 @@ function RightsideDesc({ item }: { item: PortfolioItem }) {
         return item.tags.map((tag, i) => <Tag key={i} name={tag} />);
     }, [tags]); // eslint-disable-line react-hooks/exhaustive-deps
     return (
-        <div className="description" style={{}}>
-            <div className="title">
-                <div>
-                    <div className="bolded">{item.name}</div>
-                    <div>{item.client} • {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long' }).format(item.date)}</div>
+        <div className="flex flex-row gap-[1em] ">
+            <div>{item.date.getFullYear()}</div>
+            <div className="description" style={{}}>
+                <div className="title">
+                    <div>
+                        <div className="bolded">{item.name}</div>
+                        <div>{item.client} • {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long' }).format(item.date)}</div>
+                    </div>
+                    {item.link &&
+                    <a href={item.link} target="_blank">
+                        <img src="button-linkout.svg" />
+                    </a>
+                }
                 </div>
-                {item.link &&
-                <a href={item.link} target="_blank">
-                    <img src="button-linkout.svg" />
-                </a>
-            }
-            </div>
 
-            <div className="description">
-                <ReactMarkDown>{item.body}</ReactMarkDown>
-            </div>
-            <div className="flex flex-row smaller mt-1.5">
-                {TagMemo}
+                <div className="description">
+                    <ReactMarkDown>{item.body}</ReactMarkDown>
+                </div>
+                <div className="flex flex-row smaller mt-1.5">
+                    {TagMemo}
+                </div>
             </div>
         </div>
     );

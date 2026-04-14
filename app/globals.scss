@@ -76,29 +76,30 @@ select {
   scrollbar-width: none;
   &::-webkit-scrollbar { display: none; }
   display: flex;
-  justify-content: flex-end;
 
   .left-desc-container {
     position: fixed;
-    left: 2em;
+    right: 2em;
     top: 0;
-    width: calc(50vw - 4em);
+    width: calc(30dvw);
     display: flex;
     flex-direction: column;
-    gap: 5em;                       
+    gap: 120;                       
     transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     will-change: transform;
+    .sorted-list {
+      transition: opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
+
+    }
   }
 }
 
 .rightside-item-snap {
   scroll-snap-align: start;
   min-height: 100%;
-  max-width: 50vw;
-  min-width: 50vw;
-  margin-right: 2em;
+  max-width: 60vw;
+  min-width: 60vw;
 
-  justify-self: flex-end;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -109,13 +110,12 @@ select {
   display: flex;
   position: fixed;
   flex-direction: column;
-
-  align-self: center;
-  min-height: 200px;
+  justify-content: center;
+  z-index: 900;
 }
 
 .width-half {
-  max-width: calc(50vw - 2em);
+  bottom: 2em;
 }
 
 .width-full {
@@ -193,6 +193,10 @@ select {
   margin-top: 2.2em;
   position: fixed;
   z-index: 999;
+  pointer-events: none;
+  a {
+    pointer-events: all;
+  }
 }
 
 .content {
