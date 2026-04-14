@@ -34,11 +34,6 @@ export default function Rightside({
             );
     }, [list, tags.size, oldNew]);
 
-    // Recompute left container Y whenever active item changes
-    const activeIdx = sortedList.findIndex(item => (item.index ?? 0) === id);
-
-
-    // scrollToId — remove all leftRef logic, left is no longer scrolled
     const scrollToId = useCallback((targetId: number, behavior: ScrollBehavior) => {
         const idx = sortedList.findIndex(item => (item.index ?? 0) === targetId);
         const ref = idx !== -1 ? itemRefs.current[idx] : null;
@@ -53,7 +48,6 @@ export default function Rightside({
         return true;
     }, [sortedList]);
 
-    
     const updateLeftColumn = useCallback(() => {
         const container = containerRef.current;
         if (!container || sortedList.length === 0) return;
@@ -99,33 +93,38 @@ export default function Rightside({
         setId(sortedList[closest]?.index ?? closest);
     }, [sortedList, setId]);
 
+    // Helper: compute leftY for a given sortedList index from DOM refs
+    const computeLeftY = useCallback((targetIdx: number) => {
+        let offset = 0;
+        for (let i = 0; i < targetIdx; i++) {
+            offset += (leftItemRefs.current[i]?.offsetHeight ?? 0) + GAP_PX;
+        }
+        const h = leftItemRefs.current[targetIdx]?.offsetHeight ?? 0;
+        return window.innerHeight / 2 - offset - h / 2;
+    }, []);
+
     // 1. Button press / leftside click → scroll right column
     useEffect(() => {
         scrollToId(id, 'smooth');
     }, [id]); // intentionally omit scrollToId
 
-    // 2. Button press → snap left column to active item
-    useEffect(() => {
-        if (activeIdx === -1) return;
-        let offsetToActive = 0;
-        for (let i = 0; i < activeIdx; i++) {
-            offsetToActive += (leftItemRefs.current[i]?.offsetHeight ?? 0) + GAP_PX;
-        }
-        const activeHeight = leftItemRefs.current[activeIdx]?.offsetHeight ?? 0;
-        setLeftY(window.innerHeight / 2 - offsetToActive - activeHeight / 2);
-    }, [activeIdx, sortedList]);
-
-    // 3. Tag/sort change → instant reposition
     useEffect(() => {
         const inList = sortedList.some(item => (item.index ?? 0) === id);
         if (!inList && sortedList.length > 0) {
             setId(sortedList[0].index ?? 0);
         } else {
-            requestAnimationFrame(() => scrollToId(id, 'instant'));
+            requestAnimationFrame(() => {
+                scrollToId(id, 'instant');
+                requestAnimationFrame(() => {
+                    const targetIdx = sortedList.findIndex(item => (item.index ?? 0) === id);
+                    if (targetIdx === -1) return;
+                    setLeftY(computeLeftY(targetIdx));
+                });
+            });
         }
     }, [sortedList]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // 4. Scroll listeners — left interpolates live, right only updates id on scrollend
+    // 3. Scroll listeners — left interpolates live, right only updates id on scrollend
     useEffect(() => {
         const container = containerRef.current;
         if (!container) return;
@@ -151,7 +150,7 @@ export default function Rightside({
                         ref={el => { itemRefs.current[i] = el; }}
                         className="rightside-item-snap sorted-list"
                     >
-                        <RightsideInner item={item} index={i}/>
+                        <RightsideInner item={item} list={list}/>
                     </div>
                 ))}
             </div>
@@ -168,7 +167,7 @@ export default function Rightside({
                         style={{ opacity: (item.index ?? 0) === id ? 1 : 0.5,
                             filter: (item.index ?? 0) === id ? "blur(0)" : `blur(${1 * Math.abs((item.index ?? 0) - id)}px)`,
                             cursor: (item.index ?? 0) === id ? "default" : "pointer",
-                            alignSelf: i % 2 == 0 ? "flex-start" : "flex-end",
+                            alignSelf: list.findIndex(it => (it.id === item.id))! % 2 == 0 ? "flex-start" : "flex-end"
                         }}
                         className="sorted-list"
                         onClick={() => setId(item.index ?? 0)}
@@ -187,7 +186,7 @@ export default function Rightside({
     );
 }
 
-function RightsideInner({ item, index }: { item: PortfolioItem, index: number }) {
+function RightsideInner({ item, list }: { item: PortfolioItem, list: PortfolioItem[] }) {
     const [loaded, setLoaded] = useState(false);
     const [rotation, setRotation] = useState({ x: 0, y: 0 });
     const [dragging, setDragging] = useState(false);
@@ -262,7 +261,7 @@ function RightsideInner({ item, index }: { item: PortfolioItem, index: number })
                 transition: dragging ? "none" : "transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
                 cursor: dragging ? "grabbing" : "grab",
                 transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
-                alignSelf: index % 2 == 0 ? "flex-end" : "flex-start"
+                alignSelf: list.findIndex(it => (it.id === item.id))! % 2 == 0 ? "flex-end" : "flex-start"
             }}
         >
             <div className="media-wrapper">
