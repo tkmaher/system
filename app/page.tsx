@@ -97,18 +97,6 @@ export default function Page() {
     setTheme(theme === 'light' ? 'dark' : 'light');
   };
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowUp') {
-        setId(prev => Math.max(prev - 1, 0));
-      } else if (e.key === 'ArrowDown') {
-        setId(prev => Math.min(prev + 1, list.length - 1));
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [list]);
-
   return (
     <div>
       <TagProvider>
@@ -116,7 +104,7 @@ export default function Page() {
           <div className="switcher float-left flex items-center">
           <Teardrop className="teardrop" />
             <a onClick={toggleTheme}>
-              <span className="first">Health</span>+<span className="second" onClick={() => setIsInfo(false)}>Recreation</span>
+              <span className="first">Health</span>+<span className="second" >Recreation</span>
             </a>
           </div>
           <div className="switcher float-right text-right">
@@ -128,14 +116,12 @@ export default function Page() {
         </div>
 
         <div className={trigger ? 'zoom-in content' : 'content'} style={{ opacity: loaded ? 1 : 0 }}>
-          {isInfo ? (
-            loaded && <Info />
-          ) : (
-            <>
-              {loaded && <Leftside id={id} setId={setId} list={list} />}
-              {loaded && <Rightside id={id} setId={setId} list={list} />}
+          {loaded && <>
+              {isInfo && <Info />}
+              <Leftside id={id} setId={setId} list={list} />
+              <Rightside id={id} setId={setId} list={list} />
             </>
-          )}
+          }
         </div>
       </TagProvider>
     </div>

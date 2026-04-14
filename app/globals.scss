@@ -34,7 +34,7 @@ body {
   font-variation-settings: 'wght' 200;
   user-select: none;
   overflow-x: hidden;
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out;
 }
 
 a {
@@ -144,13 +144,14 @@ select {
 
 .width-half {
   bottom: 2em;
-  left: 50%;
-  transform: translateX(-50%);
+  width: 100%;
 }
 
 .width-full {
-  max-width: 100%;
-  position: relative;
+  width: 100dvw;
+  height: 100dvh;
+  background-color: var(--background);
+  z-index: 998;
 }
 
 .switcher {
@@ -276,7 +277,7 @@ select {
     flex-grow: 0;
     width: 0;
     opacity: 0;
-    transition: width 0.2s ease-in-out, opacity 0.2s ease-in-out;
+    transition: width 0.2s ease-in-out, opacity 0.1s ease-in-out;
     pointer-events: none;
   }
   & > :last-child {

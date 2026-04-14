@@ -34,6 +34,10 @@ export default function Rightside({
             );
     }, [list, tags.size, oldNew]);
 
+    const listAlignment = useMemo(() => {
+        return new Map(list.map((item, i) => [item.id, i]));
+    }, [list]);
+
     const scrollToId = useCallback((targetId: number, behavior: ScrollBehavior) => {
         const idx = sortedList.findIndex(item => (item.index ?? 0) === targetId);
         const ref = idx !== -1 ? itemRefs.current[idx] : null;
@@ -150,7 +154,7 @@ export default function Rightside({
                         ref={el => { itemRefs.current[i] = el; }}
                         className="rightside-item-snap sorted-list"
                     >
-                        <RightsideInner item={item} list={list}/>
+                        <RightsideInner item={item} listAlignment={listAlignment}/>
                     </div>
                 ))}
             </div>
@@ -167,7 +171,7 @@ export default function Rightside({
                         style={{ opacity: (item.index ?? 0) === id ? 1 : 0.5,
                             filter: (item.index ?? 0) === id ? "blur(0)" : `blur(${1 * Math.abs((item.index ?? 0) - id)}px)`,
                             cursor: (item.index ?? 0) === id ? "default" : "pointer",
-                            alignSelf: list.findIndex(it => (it.id === item.id))! % 2 == 0 ? "flex-start" : "flex-end"
+                            alignSelf: listAlignment.get(item.id)! % 2 == 0 ? "flex-end" : "flex-start"
                         }}
                         className="sorted-list"
                         onClick={() => setId(item.index ?? 0)}
@@ -186,7 +190,7 @@ export default function Rightside({
     );
 }
 
-function RightsideInner({ item, list }: { item: PortfolioItem, list: PortfolioItem[] }) {
+function RightsideInner({ item, listAlignment }: { item: PortfolioItem, listAlignment: Map<string, number> }) {
     const [loaded, setLoaded] = useState(false);
     const [rotation, setRotation] = useState({ x: 0, y: 0 });
     const [dragging, setDragging] = useState(false);
@@ -261,7 +265,7 @@ function RightsideInner({ item, list }: { item: PortfolioItem, list: PortfolioIt
                 transition: dragging ? "none" : "transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)",
                 cursor: dragging ? "grabbing" : "grab",
                 transform: `perspective(1000px) rotateX(${rotation.x}deg) rotateY(${rotation.y}deg)`,
-                alignSelf: list.findIndex(it => (it.id === item.id))! % 2 == 0 ? "flex-end" : "flex-start"
+                alignSelf: listAlignment.get(item.id)! % 2 == 0 ? "flex-start" : "flex-end"
             }}
         >
             <div className="media-wrapper">
