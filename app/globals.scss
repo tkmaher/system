@@ -12,6 +12,11 @@
   /* item block active/hover */
   --block-active: #ececec;
   --block-hover:  #e0e0e0;
+
+  --desc-margin: 10dvw;
+  --img-margin: 7.5dvw;
+  --body-margin: 2em;
+
 }
 
 [data-theme='dark'] {
@@ -30,7 +35,6 @@ body {
   color: var(--foreground);
   font-family: "Inter Variable", sans-serif;
   font-size: 11px;
-  margin-left: 2em;
   font-variation-settings: 'wght' 200;
   user-select: none;
   overflow-x: hidden;
@@ -56,9 +60,9 @@ select {
   perspective: 1000px;
   display: flex;
   flex-direction: column;
-  max-width: 60vw;
+  max-width: calc(50dvw - var(--img-margin));
   text-align: left;
-  margin-bottom: 0.5em;
+  margin: 0 var(--img-margin) 0.5em var(--img-margin);
   gap: 1.2em;
   align-self: center;
   
@@ -108,7 +112,8 @@ select {
   .left-desc-container {
     position: fixed;
     top: 0;
-    width: calc(100dvw - 4em);
+    width: calc(100dvw - (var(--desc-margin) * 2));
+    left: var(--desc-margin);
     pointer-events: none;
     display: flex;
     flex-direction: column;
@@ -118,7 +123,7 @@ select {
     .sorted-list {
       pointer-events: all;
       transition: opacity 0.3s ease-in-out, filter 0.3s ease-in-out;
-      width: 30dvw;
+      width: calc(50dvw - (var(--desc-margin) * 2));
     }
   }
 }
@@ -138,12 +143,11 @@ select {
   display: flex;
   position: fixed;
   flex-direction: column;
-  justify-content: center;
   z-index: 900;
 }
 
 .width-half {
-  bottom: 2em;
+  bottom: 2dvh;
   width: 100%;
 }
 
@@ -221,8 +225,9 @@ select {
 
 .header {
   height: 5em;
-  width: calc(100vw - 4em);
-  margin-top: 2.2em;
+  width: calc(100dvw - (2*var(--body-margin)));
+  margin-top: calc(var(--body-margin) + 0.2em);
+  margin-left: var(--body-margin);
   position: fixed;
   z-index: 999;
   pointer-events: none;
@@ -253,8 +258,7 @@ select {
 .item-block {
   width: 110.74px;
   height: 16px;
-  margin-right: 0.5em;
-  margin-bottom: 0.5em;
+  margin: 0.25em;
   display: inline-block;
   background-color: var(--background);
   border: 0.5px solid var(--foreground);
@@ -359,38 +363,69 @@ select {
 }
 
 @media (max-width: 768px) {
-  body {
-    margin: 1em;
+  :root {
+    --body-margin: 1em
   }
-  .content {
+
+  .rightside-scroll-container {
+    .left-desc-container {
+      bottom: calc(50dvh - 75dvw);
+      .sorted-list {
+        width: auto;
+      }
+    }
+  }
+
+  .rightside-item-snap {
+    justify-content: flex-start;
+  }
+  .rightside {
+    margin-top: calc(50dvh - 75dvw);
+    max-width: 100dvw;
+    top: 2em;
+  }
+
+  .sorted-list > div {
     flex-direction: column;
-    height: auto;
   }
 
   .info-parent {
-    padding: 0;
+    padding: 2em;
+    gap: 1em;
+    em {
+      text-align: justify;
+    }
   }
 
-  .leftside {
-    align-self: flex-start;
-    width: 100%;
+  .width-full {
+    justify-content: flex-start;
+    top: calc(50dvh - 75dvw);
+  }
+
+  .width-half {
+    flex-direction: column-reverse;
   }
 
   .info {
-    flex-direction: column !important;
-    flex-wrap: wrap;
+    flex-direction: column-reverse;
+    gap: 5em;
     text-align: justify;
-    gap: 0.5em;
     .info-img {
       justify-content: center;
       img {
-        width: 50vw;
-        height: auto;
+        width: 50dvw;
       }
     }
   }
 
   .item-block {
-    width: calc(33% - 0.5em);
+    width: calc(1/3 * 100dvw - 5em);
+    margin: 0.5em;
+  }
+
+  .leftside {
+    .switcher {
+      display: none;
+    }
   }
 }

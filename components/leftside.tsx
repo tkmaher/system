@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { PortfolioItem } from "@/components/types/portfolio";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { useTags } from "@/components/contexts/tagcontext";
+import Image from "next/image";
 
 export default function Leftside({ id, setId, list }: { id: number; setId: (id: number) => void; list: PortfolioItem[] }) {
     return (
@@ -128,13 +129,15 @@ export function LeftsideInner({ id, setId, list }: { id: number; setId: (id: num
 }
 
 export function Info() {
+    const [loaded, setLoaded] = useState(false);
+
     return (
         <motion.div className="leftside width-full">
             <AnimatePresence mode="sync">
                 <motion.div
                     className="flex flex-col gap-20 max-width-[50%] info-parent align-items-center"
                     initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+                    animate={{ opacity: loaded ? 1 : 0 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
                     layout
@@ -156,7 +159,7 @@ export function Info() {
                             </div>
                         </div>
                         <div className="basis-[50%] flex items-center info-img">
-                            <img src="sign.svg" draggable="false" />
+                            <Image src="sign.svg" draggable="false" width={800} height={800} alt="Health+Recreation" onLoad={() => setLoaded(true)}/>
                         </div>
                     </div>
                     <em className="smaller text-center">
