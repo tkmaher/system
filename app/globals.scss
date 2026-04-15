@@ -143,6 +143,7 @@ select {
   display: flex;
   position: fixed;
   flex-direction: column;
+  justify-content: center;
   z-index: 900;
 }
 
@@ -369,9 +370,9 @@ select {
 
   .rightside-scroll-container {
     .left-desc-container {
-      bottom: calc(50dvh - 75dvw);
       .sorted-list {
         width: auto;
+        align-self: flex-end;
       }
     }
   }
@@ -380,9 +381,8 @@ select {
     justify-content: flex-start;
   }
   .rightside {
-    margin-top: calc(50dvh - 75dvw);
     max-width: 100dvw;
-    top: 2em;
+    margin-top: 5em;
   }
 
   .sorted-list > div {
@@ -399,7 +399,6 @@ select {
 
   .width-full {
     justify-content: flex-start;
-    top: calc(50dvh - 75dvw);
   }
 
   .width-half {
@@ -424,6 +423,9 @@ select {
   }
 
   .leftside {
+    .flex {
+      justify-content: center;
+    }
     .switcher {
       display: none;
     }
