@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.scss";
+import { staticMetadata } from "@/app/metadata";
 
-// TODO: metadata + ico
-export const metadata: Metadata = {
-  title: "Health+Recreation",
-  description: "",
-};
+
+export const metadata = staticMetadata;
 
 export default function RootLayout({
   children,

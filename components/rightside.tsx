@@ -216,7 +216,7 @@ export default function Rightside({
             </div>
 
             {sortedList.length === 0 && (
-                <div className="rightside-item-snap">no items to display</div>
+                <div className="rightside-item-snap empty">no items to display</div>
             )}
         </div>
     );

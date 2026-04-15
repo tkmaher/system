@@ -137,6 +137,13 @@ select {
   padding-bottom: 1.5em;
 }
 
+.empty  {
+  height: 100dvh;
+  width: 100dvw;
+  position: fixed;
+  text-align: center;
+}
+
 .leftside {
   display: flex;
   position: fixed;
