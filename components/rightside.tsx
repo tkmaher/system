@@ -22,8 +22,18 @@ export default function Rightside({
     const leftContainerRef = useRef<HTMLDivElement>(null);
     const leftItemRefs = useRef<(HTMLDivElement | null)[]>([]);
     const [leftY, setLeftY] = useState(0);
+    const [isMobile, setIsMobile] = useState(false);
     const programmaticScroll = useRef(false);
     const { tags, oldNew } = useTags();
+
+    // Detect mobile breakpoint
+    useEffect(() => {
+        const mq = window.matchMedia('(max-width: 768px)');
+        setIsMobile(mq.matches);
+        const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+        mq.addEventListener('change', handler);
+        return () => mq.removeEventListener('change', handler);
+    }, []);
 
     const sortedList = useMemo(() => {
         return [...list]
@@ -36,7 +46,9 @@ export default function Rightside({
 
     const listAlignment = useMemo(() => {
         return new Map(list.map((item, i) => [item.id, i]));
-    }, [list]);    const scrollToId = useCallback((targetId: number, behavior: ScrollBehavior) => {
+    }, [list]);
+
+    const scrollToId = useCallback((targetId: number, behavior: ScrollBehavior) => {
         const idx = sortedList.findIndex(item => (item.index ?? 0) === targetId);
         const ref = idx !== -1 ? itemRefs.current[idx] : null;
         if (!ref) return false;
@@ -44,9 +56,11 @@ export default function Rightside({
         if (Math.abs(ref.offsetTop - container.scrollTop) < 4) return true;
         programmaticScroll.current = true;
         ref.scrollIntoView({ behavior, block: 'start' });
-        const reset = () => { programmaticScroll.current = false; };
-        container.addEventListener('scrollend', reset, { once: true });
-        setTimeout(reset, 100);
+        // Use timeout instead of scrollend (Safari doesn't support scrollend)
+        setTimeout(
+            () => { programmaticScroll.current = false; },
+            behavior === 'smooth' ? 600 : 100
+        );
         return true;
     }, [sortedList]);
 
@@ -56,7 +70,6 @@ export default function Rightside({
         if (!container || sortedList.length === 0) return;
         const scrollTop = container.scrollTop;
     
-        // Find which two right snap points we're between
         let lowerIdx = 0;
         for (let i = 0; i < itemRefs.current.length; i++) {
             if (itemRefs.current[i] && itemRefs.current[i]!.offsetTop <= scrollTop + 1) {
@@ -81,7 +94,6 @@ export default function Rightside({
         setLeftY(getLeftY(lowerIdx) + (getLeftY(upperIdx) - getLeftY(lowerIdx)) * t);
     }, [sortedList]);
     
-    // RIGHT COLUMN: only update `id` on scrollend, never on scroll
     const updateActiveItem = useCallback(() => {
         if (programmaticScroll.current) return;
         const container = containerRef.current;
@@ -96,7 +108,6 @@ export default function Rightside({
         setId(sortedList[closest]?.index ?? closest);
     }, [sortedList, setId]);
 
-    // Helper: compute leftY for a given sortedList index from DOM refs
     const computeLeftY = useCallback((targetIdx: number) => {
         let offset = 0.0;
         for (let i = 0; i < targetIdx; i++) {
@@ -111,9 +122,7 @@ export default function Rightside({
         scrollToId(id, 'smooth');
     }, [id]); // intentionally omit scrollToId
 
-    // 2. Tag/sort change → correct scroll and leftY before paint.
-    //    useLayoutEffect fires after React commits the reordered DOM but before
-    //    the browser paints, so the user never sees the wrong scroll position.
+    // 2. Tag/sort change → correct scroll and leftY before paint
     useLayoutEffect(() => {
         const container = containerRef.current;
         if (!container || sortedList.length === 0) return;
@@ -129,25 +138,35 @@ export default function Rightside({
         if (ref) {
             programmaticScroll.current = true;
             container.scrollTop = ref.offsetTop;
-            const release = () => { programmaticScroll.current = false; };
-            container.addEventListener('scrollend', release, { once: true });
-            setTimeout(release, 100);
+            // Use timeout instead of scrollend (Safari doesn't support scrollend)
+            setTimeout(() => { programmaticScroll.current = false; }, 100);
         }
 
         setLeftY(computeLeftY(targetIdx));
     }, [sortedList]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    // 3. Scroll listeners — left interpolates live, right only updates id on scrollend
+    // 3. Scroll listeners — replaces scrollend (not supported in Safari) with
+    //    a debounced fallback: left column interpolates on every scroll tick,
+    //    active id + final left position settle ~150ms after scrolling stops.
     useEffect(() => {
         const container = containerRef.current;
         if (!container) return;
-        container.addEventListener('scroll', updateLeftColumn);
-        container.addEventListener('scrollend', updateActiveItem);
-        container.addEventListener('scrollend', updateLeftColumn);
+
+        let scrollEndTimer: ReturnType<typeof setTimeout>;
+
+        const handleScroll = () => {
+            updateLeftColumn();
+            clearTimeout(scrollEndTimer);
+            scrollEndTimer = setTimeout(() => {
+                updateActiveItem();
+                updateLeftColumn();
+            }, 150);
+        };
+
+        container.addEventListener('scroll', handleScroll, { passive: true });
         return () => {
-            container.removeEventListener('scroll', updateLeftColumn);
-            container.removeEventListener('scrollend', updateActiveItem);
-            container.removeEventListener('scrollend', updateLeftColumn);
+            container.removeEventListener('scroll', handleScroll);
+            clearTimeout(scrollEndTimer);
         };
     }, [updateLeftColumn, updateActiveItem]);
 
@@ -155,7 +174,6 @@ export default function Rightside({
     return (
         <div ref={containerRef} className="rightside-scroll-container">
 
-            {/* Right: unchanged */}
             <div className="right">
                 {sortedList.map((item, i) => (
                     <div
@@ -164,9 +182,16 @@ export default function Rightside({
                         className="rightside-item-snap sorted-list"
                     >
                         <RightsideInner item={item} listAlignment={listAlignment}/>
+                        
+                        {isMobile && (
+                            <div className="mobile-inline-desc">
+                                <RightsideDesc item={item} />
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
+
             <div
                 ref={leftContainerRef}
                 className="left-desc-container"
@@ -189,8 +214,6 @@ export default function Rightside({
                     </div>
                 ))}
             </div>
-
-            
 
             {sortedList.length === 0 && (
                 <div className="rightside-item-snap">no items to display</div>
@@ -257,8 +280,6 @@ function RightsideInner({ item, listAlignment }: { item: PortfolioItem, listAlig
         setDragging(false);
         setRotation({ x: 0, y: 0 });
     };
-
-    
 
     return (
         <motion.div
@@ -337,6 +358,7 @@ function RightsideDesc({ item }: { item: PortfolioItem }) {
     const TagMemo = useMemo(() => {
         return item.tags.map((tag, i) => <Tag key={i} name={tag} />);
     }, [tags]); // eslint-disable-line react-hooks/exhaustive-deps
+
     return (
         <div className="flex flex-row gap-[1em] ">
             <div>{item.date.getFullYear()}</div>

@@ -51,8 +51,8 @@ hr {
 }
 
 select {
-  -webkit-appearance: none; /* for Chrome, Safari, Opera */
-  -moz-appearance: none;    /* for Firefox */
+  -webkit-appearance: none;
+  -moz-appearance: none;
   appearance: none;
 }
 
@@ -117,8 +117,7 @@ select {
     pointer-events: none;
     display: flex;
     flex-direction: column;
-    gap: 1200;                       
-    // transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    gap: 1200;
     will-change: transform;
     .sorted-list {
       pointer-events: all;
@@ -131,7 +130,6 @@ select {
 .rightside-item-snap {
   scroll-snap-align: start;
   min-height: 100%;
-
 
   display: flex;
   flex-direction: column;
@@ -212,7 +210,6 @@ select {
   }
   &:has(.child:first-child:hover) {
     .child:not(:first-child) {
-      // Add your styles for the rest of the children here
       opacity: 1;
       pointer-events: auto;
     }
@@ -370,19 +367,29 @@ select {
 
   .rightside-scroll-container {
     .left-desc-container {
-      .sorted-list {
-        width: auto;
-        align-self: flex-end;
-      }
+      display: none;
     }
   }
 
   .rightside-item-snap {
     justify-content: flex-start;
+    align-items: center;
+    gap: 1.5em;
+    padding: 6em 0 2em;
+    width: 100dvw;
+    box-sizing: border-box;
   }
+
   .rightside {
-    max-width: 100dvw;
-    margin-top: 5em;
+    max-width: calc(100dvw - 2em);
+    width: calc(100dvw - 2em);
+    margin: 0;
+    align-self: unset !important;
+  }
+
+  .mobile-inline-desc {
+    width: calc(100dvw - 2em);
+    max-width: calc(100dvw - 2em);
   }
 
   .sorted-list > div {
@@ -390,7 +397,7 @@ select {
   }
 
   .info-parent {
-    padding: 2em;
+    padding: 6em 2em 2em 2em;
     gap: 1em;
     em {
       text-align: justify;
