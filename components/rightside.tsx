@@ -337,6 +337,20 @@ function RightsideInner({ item, listAlignment }: { item: PortfolioItem, listAlig
     );
 }
 
+function Linkout({ className }: { className?: string }) {
+    return (
+        <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16.11" className={className} fill="currentColor">
+          
+          <g id="Layer_1-2" data-name="Layer 1">
+            <g>
+              <polygon className={className} points="16 16.11 0 16.11 0 0 5.46 0 5.46 1 1 1 1 15.11 15 15.11 15 10.6 16 10.6 16 16.11"/>
+              <polygon className={className} points="8.75 .08 8.75 1.08 14.26 1.08 7.82 7.53 8.52 8.23 14.97 1.79 14.97 7.36 15.97 7.36 15.97 .08 8.75 .08"/>
+            </g>
+          </g>
+        </svg>
+    );
+  }
+
 function RightsideDesc({ item }: { item: PortfolioItem }) {
     const { tags, setTagList, setTags } = useTags();
 
@@ -371,7 +385,7 @@ function RightsideDesc({ item }: { item: PortfolioItem }) {
                     </div>
                     {item.link &&
                     <a href={item.link} target="_blank">
-                        <img src="button-linkout.svg" />
+                        <Linkout className="linkout"/>
                     </a>
                 }
                 </div>

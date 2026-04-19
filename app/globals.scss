@@ -179,7 +179,6 @@ select {
     display: inline-block;
     margin-right: 0;
     transition: width 0.2s ease-in-out, margin-right 0.2s ease-in-out;
-    path: {stroke: var(--foreground)};
   }
 
   &:hover {
@@ -195,6 +194,7 @@ select {
     }
   }
 }
+
 
 .bolded {
   font-variation-settings: 'wght' 500;
