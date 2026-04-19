@@ -145,17 +145,17 @@ export function Info() {
                     <div className="flex flex-row info">
                         <div className="flex flex-col gap-2 basis-[50%] self-center flex-grow-0">
                             <div>
-                                <div className="bolded">Health+Recreation</div> is an independent web development studio based in Chicago, Illinois. It specializes in personalized designs with an emphasis on modularity and customization.
+                                <div className="bolded">Health+Recreation</div> is an independent studio based in Chicago, Illinois. It specializes in providing web development and digital infrastructure to artists, musicians, and designers.
                             </div>
                             <div>
-                                Services include full-stack web development, UI/UX design, graphic design, SEO, and web consulting.
+                                Services include full-stack web development, UI/UX design, graphic design, SEO, and video editing.
                             </div>
                             <br />
                             <div className="contact-link">
-                                <a className="hover-bold child underline" target="_blank" href="mailto:[INSERT EMAIL]">Contact</a>
-                                <em className="child">→name@domain.com</em>
-                                <br />
-                                <em className="child smaller">Include a general outline of your project. Rates are determined based on time commitment and hosting/server costs.</em>
+                                <a className="hover-bold child border-b-[0.5] border-dashed" target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSdNh9u1NH6s54Q8kS1bqYpKTz9oQvDPGJUmxtpz685k-pqaBw/viewform?usp=dialog">Contact</a>
+                                <em className="child">→tom@health-and-recreation.com</em>
+                                <br/>
+                                <em className="child smaller">Include a general overview of your project. Rates are determined based on time commitment and hosting/server costs.</em>
                             </div>
                         </div>
                         <div className="basis-[50%] flex items-center info-img">

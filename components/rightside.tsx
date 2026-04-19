@@ -299,6 +299,7 @@ function RightsideInner({ item, listAlignment }: { item: PortfolioItem, listAlig
             }}
         >
             <div className="media-wrapper">
+                {!loaded && <div className="text-center">Loading...</div>}
                 <Image
                     src={item.images[0]}
                     onLoad={() => setLoaded(true)}

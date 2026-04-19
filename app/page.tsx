@@ -49,7 +49,8 @@ export default function Page() {
           index: i,
           link: item.link ?? null,
         }));
-        setList(output);
+        const now = new Date();
+        setList(output.filter(item => item.date < now));
         setLoaded(true);
       })
       .catch(err => console.error("Error fetching portfolio items:", err));
