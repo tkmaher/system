@@ -348,6 +348,9 @@ select {
   font-size: 5em;
   transition: opacity 0.5s ease-in-out;
   user-select: none;
+  img {
+    height: 1em;
+  }
 
   a {
     color: var(--foreground);

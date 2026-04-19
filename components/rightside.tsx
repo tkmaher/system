@@ -181,7 +181,7 @@ export default function Rightside({
                         ref={el => { itemRefs.current[i] = el; }}
                         className="rightside-item-snap sorted-list"
                     >
-                        <RightsideInner item={item} listAlignment={listAlignment}/>
+                        <RightsideInner item={item} listAlignment={listAlignment} isCurrent={(item.index ?? 0) === id}/>
                         
                         {isMobile && (
                             <div className="mobile-inline-desc">
@@ -222,7 +222,7 @@ export default function Rightside({
     );
 }
 
-function RightsideInner({ item, listAlignment }: { item: PortfolioItem, listAlignment: Map<string, number> }) {
+function RightsideInner({ item, listAlignment, isCurrent }: { item: PortfolioItem, listAlignment: Map<string, number>, isCurrent: boolean }) {
     const [loaded, setLoaded] = useState(false);
     const [rotation, setRotation] = useState({ x: 0, y: 0 });
     const [dragging, setDragging] = useState(false);
@@ -240,6 +240,13 @@ function RightsideInner({ item, listAlignment }: { item: PortfolioItem, listAlig
         if (playing) { setPlaying(false); videoRef.current?.pause(); }
         else { setPlaying(true); videoRef.current?.play(); }
     }
+
+    useEffect(() => {
+        if (!isCurrent) {
+            setPlaying(false); 
+            videoRef.current?.pause();
+        }
+    }, [isCurrent])
 
     const handleMouseDown = (e: React.MouseEvent) => {
         const box = e.currentTarget.getBoundingClientRect();
@@ -328,7 +335,7 @@ function RightsideInner({ item, listAlignment }: { item: PortfolioItem, listAlig
                 )}
                 {item.video_url && (
                     <div className="play-button">
-                        <a>{playing ? "⏸" : "▶"}</a>
+                        <a>{playing ?  <img src="pause.svg"/> : <img src="play.svg"/>}</a>
                     </div>
                 )}
             </div>
