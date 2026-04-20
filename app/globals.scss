@@ -440,12 +440,13 @@ select {
 
 /* ─── Hover (pointer devices) ────────────────────────────────────── */
 
+.switcher:hover {
+  .first  { font-variation-settings: 'wght' 500; }
+  .second { font-variation-settings: 'wght' 200; }
+  .teardrop { margin-right: 0.3em; width: 1em; }
+}
+
 @media (hover: hover) {
-  .switcher:hover {
-    .first  { font-variation-settings: 'wght' 500; }
-    .second { font-variation-settings: 'wght' 200; }
-    .teardrop { margin-right: 0.3em; width: 1em; }
-  }
 
   .hover-bold:hover {
     cursor: pointer;
@@ -462,15 +463,10 @@ select {
     .float-left { width: 1em; opacity: 1; }
   }
 
-  .media-wrapper:hover .play-button { opacity: 1; }
+  .media-wrapper.play-button { opacity: 1; }
 }
 
 @media (hover: none) {
-  .switcher:active {
-    .first  { font-variation-settings: 'wght' 500; }
-    .second { font-variation-settings: 'wght' 200; }
-    .teardrop { margin-right: 0.3em; width: 1em; }
-  }
 
   .hover-bold:active {
     font-variation-settings: 'wght' 500;
