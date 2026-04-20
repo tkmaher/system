@@ -7,7 +7,7 @@ export const staticMetadata: Metadata = {
       template: 'Health+Recreation| %s',
       default: 'Health+Recreation', // a default is required when creating a template
     },
-    description: "Health+Recreation is the design studio of otherseas1.",
+    description: "Health+Recreation is the website development studio of otherseas1.",
     keywords: ["design", "websites", "freelance", "media", "music", "services"],
     robots: {
       index: true,
@@ -19,7 +19,7 @@ export const staticMetadata: Metadata = {
     },
     openGraph: {
       locale: "en_US",
-      siteName: "Health+Recreation | Studio",
+      siteName: "Health+Recreation | Home",
       url: "https://health-and-recreation.com/",
       type: "website",
       images: [
