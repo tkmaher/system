@@ -112,7 +112,7 @@ export function LeftsideInner({ id, setId, list }: { id: number; setId: (id: num
                     </AnimatePresence>
                 </motion.div>
             </LayoutGroup>
-            <motion.div className="flex flex-row smaller m-[auto] mt-1.5 gap-[1em]">
+            <motion.div className="flex flex-row smaller m-[auto] mt-[1em]">
                 <div className="switcher smaller mr-[1em]">
                     <a onClick={() => setOldNew(e => !e)}>
                         <span className={oldNew ? "first" : "second"}>new→old</span>{" "}

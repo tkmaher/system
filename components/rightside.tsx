@@ -400,7 +400,7 @@ function RightsideDesc({ item }: { item: PortfolioItem }) {
                 <div className="description">
                     <ReactMarkDown>{item.body}</ReactMarkDown>
                 </div>
-                <div className="flex flex-row smaller mt-1.5 gap-[1em]">
+                <div className="flex flex-row smaller mt-[1.2em]">
                     {TagMemo}
                 </div>
             </div>
