@@ -306,7 +306,7 @@ function RightsideInner({ item, listAlignment, isCurrent }: { item: PortfolioIte
             }}
         >
             <div className="media-wrapper">
-                {!loaded && <div className="text-center">Loading...</div>}
+                {!loaded && <div className="text-center empty">Loading...</div>}
                 <Image
                     src={item.images[0]}
                     onLoad={() => setLoaded(true)}
@@ -383,7 +383,7 @@ function RightsideDesc({ item }: { item: PortfolioItem }) {
 
     return (
         <div className="flex flex-row gap-[1em] ">
-            <div>{item.date.getFullYear()}</div>
+            <div className="year">{item.date.getFullYear()}</div>
             <div className="description" style={{}}>
                 <div className="title">
                     <div>
@@ -400,7 +400,7 @@ function RightsideDesc({ item }: { item: PortfolioItem }) {
                 <div className="description">
                     <ReactMarkDown>{item.body}</ReactMarkDown>
                 </div>
-                <div className="flex flex-row smaller mt-1.5">
+                <div className="flex flex-row smaller mt-1.5 gap-[1em]">
                     {TagMemo}
                 </div>
             </div>

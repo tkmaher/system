@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PortfolioItem } from "@/components/types/portfolio";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { useTags } from "@/components/contexts/tagcontext";
@@ -25,17 +25,29 @@ export function LeftsideInner({ id, setId, list }: { id: number; setId: (id: num
         }
     }, [list]);
 
+    const selectRef = useRef<HTMLSelectElement>(null);
+
+    const resize = (value: string) => {
+        const el = selectRef.current;
+        if (!el) return;
+            // Measure text width with a hidden element or canvas, or just use a lookup
+        el.style.width = value === "" ? "4em" : `${value.length + 2}ch`;
+    };
+
     function TagSelector() {
         return (
             <select
-                className={tagList.size > 0 ? "tag" : "tag pointer-events-none opacity-50"}
+                ref={selectRef}
+                style={{ width: "4em" }} // initial for "+ tag"
+                className={`text-center ${tagList.size > 0 ? "tag" : "tag pointer-events-none opacity-50"}`}
                 onChange={e => {
+                    resize(e.target.value);
                     setTags(prev => prev.add(e.target.value));
                     setTagList(prev => { const n = new Set(prev); n.delete(e.target.value); return n; });
                 }}
                 defaultValue=""
             >
-                <option className="text-center" value="">+ tag</option>
+                <option value="">+ tag</option>
                 {Array.from(tagList).map((tag, i) => (
                     <option key={i} value={tag}>{tag}</option>
                 ))}
@@ -100,7 +112,7 @@ export function LeftsideInner({ id, setId, list }: { id: number; setId: (id: num
                     </AnimatePresence>
                 </motion.div>
             </LayoutGroup>
-            <motion.div className="flex flex-row smaller m-[auto] mt-1.5">
+            <motion.div className="flex flex-row smaller m-[auto] mt-1.5 gap-[1em]">
                 <div className="switcher smaller mr-[1em]">
                     <a onClick={() => setOldNew(e => !e)}>
                         <span className={oldNew ? "first" : "second"}>new→old</span>{" "}
