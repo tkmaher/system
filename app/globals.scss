@@ -181,16 +181,18 @@ select {
     transition: width 0.2s ease-in-out, margin-right 0.2s ease-in-out;
   }
 
-  &:hover {
-    .first {
-      font-variation-settings: 'wght' 500;
-    }
-    .second {
-      font-variation-settings: 'wght' 200;
-    }
-    .teardrop {
-      margin-right: 0.3em;
-      width: 1em;
+  @media (hover: hover) {
+    &:hover {
+      .first {
+        font-variation-settings: 'wght' 500;
+      }
+      .second {
+        font-variation-settings: 'wght' 200;
+      }
+      .teardrop {
+        margin-right: 0.3em;
+        width: 1em;
+      }
     }
   }
 }
@@ -203,9 +205,11 @@ select {
 
 .hover-bold {
   transition: font-variation-settings 0.2s ease-in-out;;
-  &:hover {
-    cursor: pointer;
-    font-variation-settings: 'wght' 500;
+  @media (hover: hover) {
+    &:hover {
+      cursor: pointer;
+      font-variation-settings: 'wght' 500;
+    }
   }
 }
 
@@ -215,10 +219,12 @@ select {
     pointer-events: none;
     transition: opacity 0.2s ease-in-out;
   }
-  &:has(.child:first-child:hover) {
-    .child:not(:first-child) {
-      opacity: 1;
-      pointer-events: auto;
+  @media (hover: hover) {
+    &:has(.child:first-child:hover) {
+      .child:not(:first-child) {
+        opacity: 1;
+        pointer-events: auto;
+      }
     }
   }
 }
@@ -300,11 +306,13 @@ select {
     opacity: 1;
   }
 
-  &:hover {
-    background-color: var(--tag-bg-hover);
-    .float-left {
-      width: 1em;
-      opacity: 1;
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--tag-bg-hover);
+      .float-left {
+        width: 1em;
+        opacity: 1;
+      }
     }
   }
 
@@ -321,9 +329,11 @@ select {
   position: relative;  
   width: fit-content;
   align-self: center;
-  &:hover {
-    .play-button {
-      opacity: 1;
+  @media (hover: hover) {
+    &:hover {
+      .play-button {
+        opacity: 1;
+      }
     }
   }
 
