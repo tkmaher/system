@@ -311,7 +311,7 @@ select {
   align-items: center;
   justify-content: center;
   font-size: 5em;
-  transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.2s ease-in-out;
   user-select: none;
   img {
     height: 1em;
@@ -463,7 +463,7 @@ select {
     .float-left { width: 1em; opacity: 1; }
   }
 
-  .media-wrapper.play-button { opacity: 1; }
+  .media-wrapper:hover .play-button { opacity: 1; }
 }
 
 @media (hover: none) {

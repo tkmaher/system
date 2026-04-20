@@ -305,7 +305,15 @@ function RightsideInner({ item, listAlignment, isCurrent }: { item: PortfolioIte
                 alignSelf: listAlignment.get(item.id)! % 2 == 0 ? "flex-start" : "flex-end"
             }}
         >
-            <div className="media-wrapper">
+            <div
+                className="media-wrapper"
+                onTouchEnd={(e) => {
+                    if (item.video_url) {
+                    e.stopPropagation();
+                    togglePlay();
+                    }
+                }}
+            >
                 {!loaded && <div className="text-center empty">Loading...</div>}
                 <Image
                     src={item.images[0]}
