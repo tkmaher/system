@@ -24,7 +24,7 @@ export const staticMetadata: Metadata = {
       type: "website",
       images: [
         {
-          url: "https://health-and-recreation.com/sign.svg",
+          url: "https://health-and-recreation.com/opengraph.png",
           width: 1200,
           height: 630,
           alt: "Health+Recreation"
@@ -37,7 +37,7 @@ export const staticMetadata: Metadata = {
       
       images: [
         {
-          url: "https://health-and-recreation.com/",
+          url: "https://health-and-recreation.com/opengraph.png",
           width: 1200,
           height: 630,
           alt: "Health+Recreation"
