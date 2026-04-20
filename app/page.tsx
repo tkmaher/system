@@ -116,6 +116,8 @@ export default function Page() {
           </div>
         </div>
 
+        {!loaded && <div>Loading...</div>}
+
         <div className={trigger ? 'zoom-in content' : 'content'} style={{ opacity: loaded ? 1 : 0 }}>
           {loaded && <>
               {isInfo && <Info />}
