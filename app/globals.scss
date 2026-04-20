@@ -85,7 +85,7 @@ select {
   a {
     justify-self: flex-end;
     align-self: flex-start;
-    width: 2em;
+    width: 1.5em;
 
     img { 
       max-width: 1.5em; 
@@ -377,9 +377,6 @@ select {
     max-width: calc(100dvw - 2em);
   }
 
-  .description a {
-    width: 1.5em;
-  }
 
   .sorted-list > div {
     flex-direction: column;
