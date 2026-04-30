@@ -395,7 +395,7 @@ function RightsideDesc({ item }: { item: PortfolioItem }) {
             <div className="description" style={{}}>
                 <div className="title">
                     <div>
-                        <div className="bolded">{item.name}</div>
+                        <a className="bolded" style={{width: "auto"}} href={item.link ?? "undefined"}>{item.name}</a>
                         <div>{item.client} • {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long' }).format(item.date)}</div>
                     </div>
                     {item.link &&
